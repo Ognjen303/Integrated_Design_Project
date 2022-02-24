@@ -18,5 +18,7 @@ void go_forward(uint8_t velocity)
     
     right_wheel_motor->run(FORWARD);
     left_wheel_motor->run(FORWARD);
+
+    Serial.println("I finished going forward");
     
 }
