@@ -7,12 +7,14 @@ void test_go_forward_and_back(uint8_t velocity)
     go_forward(velocity);
     
     delay(5000);
+    Serial.println("I finished going forward.");
     
     // right_wheel_motor->run(RELEASE);
     // left_wheel_motor->run(RELEASE);
     
     go_backward(velocity);
     delay(5000);
+    Serial.println("I finished going backwards.");
     
     right_wheel_motor->run(RELEASE);
     left_wheel_motor->run(RELEASE);

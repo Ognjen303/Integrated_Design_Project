@@ -3,9 +3,22 @@
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 #include "stdlib.h"
 
+
+// -----Here you define the digital led pin numbers
+// -----double check you where you pluged in the led cables on arduino
+
+#define amber_LED 8
+#define red_LED  9
+#define green_LED  10
+
+
+
+
+
 extern Adafruit_MotorShield AFMS;
 extern Adafruit_DCMotor *right_wheel_motor;
 extern Adafruit_DCMotor *left_wheel_motor;
+
 
 
 
