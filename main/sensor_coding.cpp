@@ -1,12 +1,6 @@
 #include "header.h"
 
 
-// D8 for amber, D9 for red, D10 for green led
-const byte amberLED = 8;
-const byte redLED = 9;
-const byte greenLED = 10;
-
-
 // Time periods of blinks in milliseconds (1000 to a second).
 const unsigned long amberLEDinterval = 500;
 const unsigned long redLEDinterval = 200;
@@ -18,19 +12,7 @@ unsigned long amberLEDtimer;
 unsigned long redLEDtimer;
 unsigned long greenLEDtimer;
 
-/*
-void setup() {
-// setup the pinmode for leds
-  pinMode(amberLED, OUTPUT);
-  pinMode(redLED, OUTPUT);
-  pinMode(greenLED, OUTPUT);
-// set timer value for blinky leds 
-  amberLEDtimer = millis ();
-  redLEDtimer = millis ();
-  greenLEDtimer = millis ();
-  
-  Serial.begin(9600);
-}
+
 
 // code for toggle leds/ flashing leds
 void toggleAmberLED (void)
@@ -69,38 +51,52 @@ void toggleGreenLED (void)
   greenLEDtimer = millis ();  
   }  // end of toggleGreenLED
 
+
 // flashing amber light in 2HZ
 void flashamberled(void){
+  
+  Serial.println("I am inside of flashamberled");
+  Serial.println(amberLEDinterval);
   if ( (millis () - amberLEDtimer) >= amberLEDinterval){
-  // toggleAmberLED ();
+    toggleAmberLED ();
   }
+}
+
+
 
 //main code for color detector
+
 void DetectColour(void) {
-  
   // reading analog value from arduino, A0 for distance sensor, A1 for colour detector 
   int distance_sensorValue = analogRead(A0);
   int colour_sensorValue = analogRead(A1);
   
+  Serial.println("entering the function");
+
+  Serial.println(distance_sensorValue);
   Serial.println(colour_sensorValue);
 
   //if analog reading larger than 1000, close enough, robot stopped, start to detect colour
   if (distance_sensorValue > 800){
     // stop the car for the colour detector to detect colour
-    digitalWrite(amberLED, HIGH);
+    right_wheel_motor->run(RELEASE);
+    left_wheel_motor->run(RELEASE);
     
     // detecting colour
     if (colour_sensorValue > 250){
+      digitalWrite (greenLED, LOW);
       // analog for red is about 300 and blue about 160, test after integration
       // red led on in this case
       if ( (millis () - redLEDtimer) >= redLEDinterval){
         toggleRedLED ();
       }
+      
     }
 
     
     else if (100 < colour_sensorValue < 200){
       // green led on in this case
+      digitalWrite (redLED, LOW);
       if ( (millis () - greenLEDtimer) >= greenLEDinterval){
         toggleGreenLED ();
       }
@@ -113,6 +109,6 @@ void DetectColour(void) {
     
     } */
 
-//  }
-//}
+  }
+}
 // after detecting colour, wait for a few secs and toggle the servo/ turn off the leds?
