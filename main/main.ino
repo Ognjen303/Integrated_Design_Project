@@ -15,14 +15,22 @@ bool end_program = false;
 void setup()
 {
     AFMS.begin();
-    pinMode(amber_LED, OUTPUT);
+    pinMode(amberLED, OUTPUT);
+    pinMode(redLED, OUTPUT);
+    pinMode(greenLED, OUTPUT);
+    amberLEDtimer = millis ();
+    redLEDtimer = millis ();
+    greenLEDtimer = millis ();
+  
 
     
     Serial.begin(9600);
     Serial.println("Choose mode in which to run robot.");
     Serial.println("TESTS:");
     Serial.println("Press 1 for go_forward_and_back");
-    Serial.println("Press 2 to test Amber LED.");
+    Serial.println("Press 2 for Helen's test.");
+
+    
     //velocity = 150;
     //velocity_of_right_wheel = 150;
     //velocity_of_left_wheel = 150;
@@ -58,9 +66,14 @@ void loop()
   
           case 2:
 
-             // Amber light should light up 
-             digitalWrite(amber_LED, HIGH);
-             
+             Serial.println("I am inside test case 2 from Helen");
+             // sensor testing 
+             while (1){
+               flashamberled();
+               DetectColour();
+             }
+
+             end_program = true;
              // test here some other stuff
              
              break;
