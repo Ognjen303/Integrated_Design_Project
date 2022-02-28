@@ -6,6 +6,7 @@ import numpy as np
 
 stream = cv2.VideoCapture('http://localhost:8081/stream/video.mjpeg')
 
+#load data about the camera/scene from calibration
 mtx = np.fromfile('distortion/cameramatrix.dat', dtype=float)
 dist = np.fromfile('distortion/distortionmatrix.dat')
 newmtx = np.fromfile('distortion/newcameramatrix.dat')
@@ -14,6 +15,7 @@ mtx = np.reshape(mtx, (3, 3))
 dist = np.reshape(dist, (1,5))
 newmtx = np.reshape(newmtx, (3,3))
 
+#look at the opencv documentation to see if the args can make the detection more robust
 options = apriltag.DetectorOptions(families='tag36h11',
                                  border=1,
                                  nthreads=4,

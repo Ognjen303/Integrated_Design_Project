@@ -3,6 +3,7 @@ import cv2
 import numpy
 import time
 
+#run this script to get save a picture of the stream periodically for calibration 
 
 cap = cv2.VideoCapture('http://localhost:8081/stream/video.mjpeg')
 
@@ -13,5 +14,4 @@ while True:
     if c%80==0:
         cv2.imwrite('distortion/imgs/%d.jpg' % (c + 400),frame)
         cv2.waitKey(1)
-
     c+=1

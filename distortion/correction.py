@@ -39,8 +39,7 @@ ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.sha
 img = cv.imread('/Users/adhi/Desktop/IDP/distortion/imgs/600.jpg')
 w,  h = img.shape[:2]
 newcameramtx, roi = cv.getOptimalNewCameraMatrix(mtx, dist, (w,h), 1, (w,h))
-print(tvecs)
-print(rvecs)
+
 mtx.tofile('distortion/cameramatrix.dat')
 dist.tofile('distortion/distortionmatrix.dat')
 newcameramtx.tofile('distortion/newcameramatrix.dat')
