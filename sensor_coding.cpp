@@ -1,5 +1,10 @@
 #include "header.h"
 
+// set to true if robot is detecting a colour of the block
+bool i_am_detecting_colour = false; // flag is true if I am still trying to detect colour
+bool i_am_detecting_red_colour = false;
+bool i_am_detecting_blue_colour = false;
+
 
 // Time periods of blinks in milliseconds (1000 to a second).
 const unsigned long amberLEDinterval = 500;
@@ -52,6 +57,8 @@ void toggleGreenLED (void)
   }  // end of toggleGreenLED
 
 
+
+
 // flashing amber light in 2HZ
 void flashamberled(void){
   
@@ -64,26 +71,43 @@ void flashamberled(void){
 
 
 
+
+
 //main code for color detector
 
-void DetectColour(void) {
+void DetectColour(void) 
+{
   // reading analog value from arduino, A0 for distance sensor, A1 for colour detector 
-  int distance_sensorValue = analogRead(A0);
-  int colour_sensorValue = analogRead(A1);
+  
+  uint16_t distance_sensorValue = analogRead(A0); // value between 0 and 1023
+  uint16_t colour_sensorValue = analogRead(A1);   // value between 0 and 1023
   
   Serial.println("entering the function");
 
   Serial.println(distance_sensorValue);
   Serial.println(colour_sensorValue);
 
-  //if analog reading larger than 1000, close enough, robot stopped, start to detect colour
-  if (distance_sensorValue > 800){
+  //if analog reading larger than 800, close enough, robot stopped, start to detect colour
+  if (distance_sensorValue > 800)
+  {
+    
     // stop the car for the colour detector to detect colour
     right_wheel_motor->run(RELEASE);
     left_wheel_motor->run(RELEASE);
+
+    reset_all_flags();
     
     // detecting colour
-    if (colour_sensorValue > 250){
+    i_am_detecting_colour = true;  
+    
+
+    // Red colour
+    if (colour_sensorValue > 250)
+    {
+      reset_all_flags();
+      i_am_detecting_red_colour = true;
+      
+      
       digitalWrite (greenLED, LOW);
       // analog for red is about 300 and blue about 160, test after integration
       // red led on in this case
@@ -93,8 +117,13 @@ void DetectColour(void) {
       
     }
 
-    
-    else if (100 < colour_sensorValue < 200){
+    // Green colour
+    else if (100 < colour_sensorValue < 200)
+    {
+      reset_all_flags();
+      i_am_detecting_blue_colour = true;
+
+      
       // green led on in this case
       digitalWrite (redLED, LOW);
       if ( (millis () - greenLEDtimer) >= greenLEDinterval){
@@ -103,7 +132,8 @@ void DetectColour(void) {
     }
 
     
-    /*else{
+    /*
+     else{
       // indicates colour detector does not work
       // any solution???
     
