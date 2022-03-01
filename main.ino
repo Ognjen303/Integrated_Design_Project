@@ -75,7 +75,8 @@ void loop()
 
              Serial.println("I am inside test case 2 from Helen");
              // sensor testing 
-             while (1){
+             while (1)
+             {
                flashamberled();
                DetectColour();
              }
@@ -96,9 +97,8 @@ void loop()
              Serial.println(velocity);
              
              go_forward(velocity);
-             delay(4000);
-             go_backward(velocity);
-             delay(4000);
+             delay(60000);
+             
              right_wheel_motor->run(RELEASE);
              left_wheel_motor->run(RELEASE);
              
@@ -120,10 +120,7 @@ void loop()
 
           case 5:
 
-             while(1)
-             {
-                servo_rotating();
-             }
+             servo_rotating();
              
              Serial.println("I am rotating servo.");
 
