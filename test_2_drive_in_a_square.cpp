@@ -10,7 +10,7 @@ void test_drive_in_a_square(uint8_t velocity)
     // need to figure out how to make the robot turn by 90 degrees
     // turn 90 degrees
     turn_right(100, 100);
-    delay(3000);
+    delay(5500);
 
     
 
@@ -19,7 +19,7 @@ void test_drive_in_a_square(uint8_t velocity)
 
 
     turn_right(100, 100);
-    delay(3000);
+    delay(5500);
     
 
     go_forward(velocity);
@@ -27,7 +27,7 @@ void test_drive_in_a_square(uint8_t velocity)
 
 
     turn_right(100, 100);
-    delay(3000);
+    delay(5500);
     
     
     go_forward(velocity);
@@ -35,7 +35,7 @@ void test_drive_in_a_square(uint8_t velocity)
 
 
     turn_right(100, 100);
-    delay(3000);
+    delay(5500);
     
 
     right_wheel_motor->run(RELEASE);
