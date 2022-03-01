@@ -9,33 +9,52 @@ void test_drive_in_a_square(uint8_t velocity)
 
     // need to figure out how to make the robot turn by 90 degrees
     // turn 90 degrees
-    turn_right(100, 100);
+    turn_right();
+    Serial.println("i_am_turning_left: ");
+    Serial.println(i_am_turning_left);
+    
+    Serial.println("i_am_turning_right: ");
+    Serial.println(i_am_turning_right);
+
     delay(5500);
 
+    
+    go_forward(velocity);
+    delay(5000);
+
+
+    turn_right();
+    delay(5500);
     
 
     go_forward(velocity);
     delay(5000);
 
 
-    turn_right(100, 100);
-    delay(5500);
-    
-
-    go_forward(velocity);
-    delay(5000);
-
-
-    turn_right(100, 100);
+    turn_right();
     delay(5500);
     
     
     go_forward(velocity);
+    Serial.println("i_am_turning_left: ");
+    Serial.println(i_am_turning_left);
+    
+    Serial.println("i_am_turning_right: ");
+    Serial.println(i_am_turning_right);
     delay(5000);
 
+    
 
-    turn_right(100, 100);
+
+    turn_right();
+    Serial.println("i_am_turning_left: ");
+    Serial.println(i_am_turning_left);
+    
+    Serial.println("i_am_turning_right: ");
+    Serial.println(i_am_turning_right);
     delay(5500);
+
+    
     
 
     right_wheel_motor->run(RELEASE);
