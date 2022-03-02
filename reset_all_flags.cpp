@@ -11,4 +11,5 @@ void reset_all_flags(void)
     i_am_detecting_colour = false;
     i_am_detecting_red_colour = false;
     i_am_detecting_blue_colour = false;
+    i_stopped = false;
 }
