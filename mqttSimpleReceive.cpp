@@ -18,7 +18,8 @@
 char ssid[] = "UniOfCam-IoT";        // your network SSID (name)
 char pass[] = "cymf9Jhr";    // your network password (use for WPA, or use as key for WEP)
 
-
+String incoming; // local variable
+float angle, distance;
 
 
 // To connect with SSL/TLS:
@@ -53,11 +54,21 @@ void mqtt_Simple_receive(void)
       Serial.print(messageSize);
       Serial.println(" bytes:");
   
-      // use the Stream interface to print the contents
-      while (mqttClient.available()) 
-      {
-        Serial.print((char)mqttClient.read()); // need to store the values later
+    while (mqttClient.available()) {
+      incoming.concat((char)mqttClient.read());
+    }
+
+          for(int i = 0; i <= incoming.length(); i++){
+        if (incoming.substring(i, i+1) == ";"){
+          angle = incoming.substring(0,i).toFloat();
+          distance = incoming.substring(i+1,incoming.length()).toFloat();
+          Serial.println(incoming);
+          Serial.println(angle);
+          Serial.println(distance);
+          break;
+        }
       }
+     incoming = "";
       Serial.println();
   
       Serial.println();
