@@ -103,7 +103,7 @@ extern const char topic[]; // if both the sender and receier are connected to th
 extern float angle, distance;
 
 
-
+void stop_the_robot(void);
 void go_forward(uint8_t velocity);
 void go_backward(uint8_t velocity);
 void turn_right(void);
