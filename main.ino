@@ -27,8 +27,80 @@ void setup()
     myservo.attach(servoPin);
 
     
+
     
+    //Initialize serial and wait for port to open:
     Serial.begin(9600);
+    while (!Serial) 
+    {
+    ; // wait for serial port to connect. Needed for native USB port only
+    }
+
+
+    // attempt to connect to Wifi network:
+    Serial.print("Attempting to connect to WPA SSID: ");
+    Serial.println(ssid);
+    while (WiFi.begin(ssid, pass) != WL_CONNECTED) 
+    {
+      // failed, retry
+      Serial.print(".");
+      delay(5000);
+    }
+
+    Serial.println("You're connected to the network");
+    Serial.println();
+
+
+    // You can provide a unique client ID, if not set the library uses Arduino-millis()
+    // Each client must have a unique client ID
+    mqttClient.setId("211ARDUINO");
+  
+    //might not be workingn this line
+    // You can provide a username and password for authentication
+    mqttClient.setUsernamePassword("Arduino211", "CUED");
+
+
+
+    // we are connecting to broker "test.mosquitto.org"
+    Serial.print("Attempting to connect to the MQTT broker: ");
+    Serial.println(broker);
+  
+    if (!mqttClient.connect(broker, port)) 
+    {
+      Serial.print("MQTT connection failed! Error code = ");
+      Serial.println(mqttClient.connectError());
+  
+      while (1);
+    }
+
+
+    Serial.println("You're connected to the MQTT broker!");
+    Serial.println();
+
+
+
+
+    // connecting to channel/topic IDP211
+    Serial.print("Subscribing to topic: ");
+    Serial.println(topic);
+    Serial.println();
+  
+    // subscribe to a topic
+    mqttClient.subscribe(topic);
+  
+    // topics can be unsubscribed using:
+    // mqttClient.unsubscribe(topic);
+  
+    Serial.print("Waiting for messages on topic: ");
+    Serial.println(topic);
+    Serial.println("-------------------------------------");
+
+    
+
+  
+
+    
+    
     Serial.println("Choose mode in which to run robot.");
     Serial.println("TESTS:");
     Serial.println("Press 1 for go_forward_and_back");
@@ -37,6 +109,7 @@ void setup()
     Serial.println("Press 4 to just go forward.");
     Serial.println("Press 5 to rotate servo hand.");
     Serial.println("Press 6 to drive in a square.");
+    Serial.println("Press 7 to receive messages from Ioan/Adhi via topic");
     
     //velocity = 150;
     //velocity_of_right_wheel = 150;
@@ -150,6 +223,13 @@ void loop()
              
              end_program = true;
              break;
+
+          case 7:
+             mqtt_Simple_receive();
+
+             end_program = true;
+             break;
+             
        }
       
     mode = 0;                // clear the mode for reuse
