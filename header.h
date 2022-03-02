@@ -4,6 +4,15 @@
 #include "stdlib.h"
 #include "Servo.h"
 
+#include <ArduinoMqttClient.h>
+
+
+#if defined(ARDUINO_AVR_UNO_WIFI_REV2)
+  #include <WiFiNINA.h>
+#endif
+
+  
+
 
 // -----Here you define the digital led pin numbers
 // -----double check you where you pluged in the led cables on arduino
@@ -27,6 +36,8 @@ extern Adafruit_DCMotor *left_wheel_motor;
 extern Servo myservo;
 
 
+
+// used by helens test code
 extern const unsigned long amberLEDinterval;
 extern const unsigned long redLEDinterval;
 extern const unsigned long greenLEDinterval;
@@ -35,6 +46,7 @@ extern unsigned long amberLEDtimer;
 extern unsigned long redLEDtimer;
 extern unsigned long greenLEDtimer;
 
+//------------------------------
 
 
 extern const uint8_t servoPin;
@@ -54,6 +66,25 @@ extern bool i_am_detecting_red_colour ;
 extern bool i_am_detecting_blue_colour ;
 
 
+
+
+// ----------------------
+// files used in mqttSimpleReceive
+extern char ssid[];
+extern char pass[];
+
+
+extern WiFiClient wifiClient;
+extern MqttClient mqttClient;
+
+extern const char broker[];
+extern int        port; // non encrypted access
+extern const char topic[]; // if both the sender and receier are connected to the same topic, data will be sent
+
+
+
+
+
 void go_forward(uint8_t velocity);
 void go_backward(uint8_t velocity);
 void turn_right(void);
@@ -68,3 +99,4 @@ void DetectColour(void);
 void servo_rotating(void);
 void test_drive_in_a_square(uint8_t velocity);
 void reset_all_flags(void);
+void mqtt_Simple_receive(void);
