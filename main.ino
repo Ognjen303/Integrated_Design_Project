@@ -105,7 +105,7 @@ void setup()
     Serial.println("TESTS:");
     Serial.println("Press 1 for go_forward_and_back");
     Serial.println("Press 2 for Helen's test.");
-    Serial.println("Press 3 to go forward for 60 seconds and stop.");
+    Serial.println("Press 3 to go forward for 3 seconds and stop.");
     Serial.println("Press 4 to just go forward.");
     Serial.println("Press 5 to rotate servo hand.");
     Serial.println("Press 6 to drive in a square.");
@@ -166,14 +166,13 @@ void loop()
              
              velocity = read_integer_input();
 
-             Serial.println("Your input is: ");
-             Serial.println(velocity);
-             
              go_forward(velocity);
-             delay(60000);
-             
-             right_wheel_motor->run(RELEASE);
-             left_wheel_motor->run(RELEASE);
+             delay(3000);
+             stop_the_robot();
+             Serial.println("I am going forward:");
+             Serial.println(i_am_going_forward);
+             Serial.println("I have stopped:");
+             Serial.println(i_stopped);
              
              end_program = true;
              break;

@@ -64,6 +64,25 @@ extern bool i_am_turning_right;
 extern bool i_am_detecting_colour;
 extern bool i_am_detecting_red_colour ;
 extern bool i_am_detecting_blue_colour ;
+extern bool i_stopped;
+
+
+
+
+// ----------------------
+// files used in mqttSimpleReceive
+extern char ssid[];
+extern char pass[];
+
+
+extern WiFiClient wifiClient;
+extern MqttClient mqttClient;
+
+extern const char broker[];
+extern int        port; // non encrypted access
+extern const char topic[]; // if both the sender and receier are connected to the same topic, data will be sent
+
+extern float angle, distance;
 
 
 
