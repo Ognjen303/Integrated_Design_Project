@@ -33,7 +33,7 @@ void setup()
     Serial.println("TESTS:");
     Serial.println("Press 1 for go_forward_and_back");
     Serial.println("Press 2 for Helen's test.");
-
+    Serial.println("Press 3 to go forward for 60 seconds and stop.");
     Serial.println("Press 4 to just go forward.");
     Serial.println("Press 5 to rotate servo hand.");
     Serial.println("Press 6 to drive in a square.");
@@ -88,7 +88,7 @@ void loop()
 
           case 3:
 
-             Serial.println("What is the velocity you wish to go at in test case 2?");
+             Serial.println("What is the velocity you wish to go at in test case 3?");
              Serial.println("Input a integer between 0 and 255, where 255 is max velocity.");
              
              velocity = read_integer_input();
