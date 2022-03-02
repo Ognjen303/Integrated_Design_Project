@@ -64,7 +64,6 @@ extern bool i_am_turning_right;
 extern bool i_am_detecting_colour;
 extern bool i_am_detecting_red_colour ;
 extern bool i_am_detecting_blue_colour ;
-extern bool i_stopped;
 
 
 
@@ -85,25 +84,7 @@ extern const char topic[]; // if both the sender and receier are connected to th
 extern float angle, distance;
 
 
-
-
-// ----------------------
-// files used in mqttSimpleReceive
-extern char ssid[];
-extern char pass[];
-
-
-extern WiFiClient wifiClient;
-extern MqttClient mqttClient;
-
-extern const char broker[];
-extern int        port; // non encrypted access
-extern const char topic[]; // if both the sender and receier are connected to the same topic, data will be sent
-
-extern float angle, distance;
-
-
-void stop_the_robot(void);
+void read_from_wifi(void);
 void go_forward(uint8_t velocity);
 void go_backward(uint8_t velocity);
 void turn_right(void);
