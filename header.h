@@ -85,7 +85,25 @@ extern const char topic[]; // if both the sender and receier are connected to th
 extern float angle, distance;
 
 
-void stop_the_robot(void);
+
+
+// ----------------------
+// files used in mqttSimpleReceive
+extern char ssid[];
+extern char pass[];
+
+
+extern WiFiClient wifiClient;
+extern MqttClient mqttClient;
+
+extern const char broker[];
+extern int        port; // non encrypted access
+extern const char topic[]; // if both the sender and receier are connected to the same topic, data will be sent
+
+extern float angle, distance;
+
+
+
 void go_forward(uint8_t velocity);
 void go_backward(uint8_t velocity);
 void turn_right(void);
