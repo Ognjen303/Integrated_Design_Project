@@ -10,7 +10,7 @@ bool i_am_turning_left = false;
 
 // used to say inside the brackets: uint8_t velocity_of_right_wheel, uint8_t velocity_of_left_wheel istead of void
 
-void turn_left(void)
+void turn_left(uint8_t left_velocity)
 {
     // maybe try fixing the turning velocity of both wheels to 100
 
