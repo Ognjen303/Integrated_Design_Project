@@ -110,6 +110,7 @@ void setup()
     Serial.println("Press 5 to rotate servo hand.");
     Serial.println("Press 6 to drive in a square.");
     Serial.println("Press 7 to receive messages from Ioan/Adhi via topic");
+    Serial.println("Press 8 to start driving!");
     
     //velocity = 150;
     //velocity_of_right_wheel = 150;
