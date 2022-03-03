@@ -9,7 +9,7 @@ bool i_am_turning_right = false;
 
 // used to say inside the brackets: uint8_t velocity_of_right_wheel, uint8_t velocity_of_left_wheel istead of void
 
-void turn_right(void)
+void turn_right(uint8_t right_velocity)
 {
     if(i_am_turning_right)
       return;
