@@ -129,107 +129,130 @@ void loop()
         
       switch(mode)
       { 
-          case 1:
-             Serial.println("What is the velocity you wish to go at in test case 1?");
-             Serial.println("Input a integer between 0 and 255, where 255 is max velocity.");
-             
-             
-             velocity = read_integer_input();
+         case 1:
+            Serial.println("What is the velocity you wish to go at in test case 1?");
+            Serial.println("Input a integer between 0 and 255, where 255 is max velocity.");
+            
+            
+            velocity = read_integer_input();
 
-             Serial.println("Your input is: ");
-             Serial.println(velocity);
-             
-             test_go_forward_and_back(velocity);
-             
-             end_program = true;
-             break;
-  
-          case 2:
+            Serial.println("Your input is: ");
+            Serial.println(velocity);
+            
+            test_go_forward_and_back(velocity);
+            
+            end_program = true;
+            break;
 
-             Serial.println("I am inside test case 2 from Helen");
-             // sensor testing 
-             while (1)
-             {
-               flashamberled();
-               DetectColour();
-             }
+         case 2:
 
-             end_program = true;
-             // test here some other stuff
-             
-             break;
+            Serial.println("I am inside test case 2 from Helen");
+            // sensor testing 
+            while (1)
+            {
+            flashamberled();
+            DetectColour();
+            }
 
-          case 3:
+            end_program = true;
+            // test here some other stuff
+            
+            break;
 
-             Serial.println("What is the velocity you wish to go at in test case 3?");
-             Serial.println("Input a integer between 0 and 255, where 255 is max velocity.");
-             
-             velocity = read_integer_input();
+         case 3:
 
-             go_forward(velocity);
-             delay(3000);
-             stop_the_robot();
-             Serial.println("I am going forward:");
-             Serial.println(i_am_going_forward);
-             Serial.println("I have stopped:");
-             Serial.println(i_stopped);
-             
-             end_program = true;
-             break;
+            Serial.println("What is the velocity you wish to go at in test case 3?");
+            Serial.println("Input a integer between 0 and 255, where 255 is max velocity.");
+            
+            velocity = read_integer_input();
 
-          case 4:
-          
-             Serial.println("What is the velocity you wish to go at in test case 4?");
-             Serial.println("Input a integer between 0 and 255, where 255 is max velocity.");
+            go_forward(velocity);
+            delay(3000);
+            stop_the_robot();
+            Serial.println("I am going forward:");
+            Serial.println(i_am_going_forward);
+            Serial.println("I have stopped:");
+            Serial.println(i_stopped);
+            
+            end_program = true;
+            break;
 
-             velocity = read_integer_input();
+         case 4:
+         
+            Serial.println("What is the velocity you wish to go at in test case 4?");
+            Serial.println("Input a integer between 0 and 255, where 255 is max velocity.");
 
-             go_forward(velocity);
-             
-             end_program = true;
+            velocity = read_integer_input();
 
-             break;
+            go_forward(velocity);
+            
+            end_program = true;
 
-          case 5:
+            break;
 
-             servo_rotating();
-             
-             Serial.println("I am rotating servo.");
+         case 5:
 
-             end_program = true;
+            servo_rotating();
+            
+            Serial.println("I am rotating servo.");
 
-             break;
+            end_program = true;
 
-          
-          default:
-             Serial.println("You messed up the input somehow :( ");
-              
-             end_program = true;
-             break;
+            break;
 
-          case 6:
+         case 6:
 
-             Serial.println("What is the velocity you wish to go at in test case 6?");
-             Serial.println("Input a integer between 0 and 255, where 255 is max velocity.");
-             
-             
-             velocity = read_integer_input();
+            Serial.println("What is the velocity you wish to go at in test case 6?");
+            Serial.println("Input a integer between 0 and 255, where 255 is max velocity.");
+            
+            
+            velocity = read_integer_input();
 
-             Serial.println("Your input is: ");
-             Serial.println(velocity);
-             
-             test_drive_in_a_square(velocity);
-             
-             end_program = true;
-             break;
+            Serial.println("Your input is: ");
+            Serial.println(velocity);
+            
+            test_drive_in_a_square(velocity);
+            
+            end_program = true;
+            break;
 
-          case 7:
-             mqtt_Simple_receive();
+         case 7:
+            mqtt_Simple_receive();
 
-             end_program = true;
-             break;
-             
-       }
+            end_program = true;
+            break;
+
+         case 8:
+            while (1) 
+            {
+               read_from_wifi();
+               while (abs(angle) > 15) 
+               {
+                  read_from_wifi();
+                  if (angle > 0) 
+                  {
+                     turn_left(90);
+                  }
+                  else 
+                  {
+                     turn_right(90);
+                  }
+               }
+               if(distance > 0.1)
+               {
+                  go_backward(255);
+               }
+            }
+
+            end_program = true;
+            break; 
+
+         default:
+            Serial.println("You messed up the input somehow :( ");
+            
+            end_program = true;
+            break;
+      }
       
     mode = 0;                // clear the mode for reuse
     
