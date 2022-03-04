@@ -15,7 +15,7 @@ bool end_program = false;
 
 void setup()
 {
-  AFMS.begin();
+  AFMS.begin(30);
   pinMode(amberLED, OUTPUT);
   pinMode(redLED, OUTPUT);
   pinMode(greenLED, OUTPUT);
@@ -105,11 +105,13 @@ void setup()
   Serial.println("TESTS:");
   Serial.println("Press 1 for go_forward_and_back");
   Serial.println("Press 2 for Helen's test.");
-  Serial.println("Press 3 to go forward for 60 seconds and stop.");
+  Serial.println("Press 3 to go forward for 3 seconds and stop.");
   Serial.println("Press 4 to just go forward.");
   Serial.println("Press 5 to rotate servo hand.");
   Serial.println("Press 6 to drive in a square.");
   Serial.println("Press 7 to receive messages from Ioan/Adhi via topic");
+  Serial.println("Press 8 to start driving!");
+  Serial.println("Press 9 to send message via topic to Adhi.");
 
   //velocity = 150;
   //velocity_of_right_wheel = 150;
@@ -166,14 +168,13 @@ void loop()
 
       velocity = read_integer_input();
 
-      Serial.println("Your input is: ");
-      Serial.println(velocity);
-
       go_forward(velocity);
-      delay(60000);
-
-      right_wheel_motor->run(RELEASE);
-      left_wheel_motor->run(RELEASE);
+      delay(3000);
+      stop_the_robot();
+      Serial.println("I am going forward:");
+      Serial.println(i_am_going_forward);
+      Serial.println("I have stopped:");
+      Serial.println(i_stopped);
 
       end_program = true;
       break;
@@ -201,13 +202,6 @@ void loop()
 
       break;
 
-
-    default:
-      Serial.println("You messed up the input somehow :( ");
-
-      end_program = true;
-      break;
-
     case 6:
 
       Serial.println("What is the velocity you wish to go at in test case 6?");
@@ -231,16 +225,66 @@ void loop()
       break;
 
     case 8:
-      do{
+      while (1)
+      {
         read_from_wifi();
-        if (angle > 0){
-          turn_left();
+        while (abs(angle) > 12)
+        {
+          read_from_wifi();
+          if (angle > 0)
+          {
+            turn_left(90);
+          }
+          else
+          {
+            turn_right(90);
+          }
         }
-        else{
-          turn_right();
+        if (distance >= 0.1)
+        {
+          go_forward(255);
         }
-      }while(abs(angle) < 5);
-        
+      }
+
+      end_program = true;
+      break;
+
+    case 9:
+      mqtt_Simple_sender("1");
+
+      end_program = true;
+      break;
+
+    case 11:
+      while (1) {
+        read_from_wifi(); // read the angle and distance
+
+        while (abs(angle) < 10) { // looping until the angle threshold is achieved
+          if (angle > 0) { // checking whether the robot needs to be moved left or right
+            turn_left_to_angle(abs(angle), 90);
+            delay(1000); // delay to allow the camera to catch up
+          }
+          else {
+            turn_right_to_angle(abs(angle), 90);
+            delay(1000); // delay  to allow camera to catch up
+          }
+          read_from_wifi(); // update parameters
+        }
+
+        if (distance > 0.1) { // move forward once the
+          go_forward(255);
+        }
+
+        stop_the_robot();
+      }
+      end_program = true;
+      break;
+
+    default:
+      Serial.println("You messed up the input somehow :( ");
+
+      end_program = true;
+      break;
 
   }
 
