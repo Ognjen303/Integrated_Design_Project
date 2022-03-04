@@ -111,6 +111,7 @@ void setup()
     Serial.println("Press 6 to drive in a square.");
     Serial.println("Press 7 to receive messages from Ioan/Adhi via topic");
     Serial.println("Press 8 to start driving!");
+    Serial.println("Press 9 to send message via topic to Adhi.");
     
     //velocity = 150;
     //velocity_of_right_wheel = 150;
@@ -246,7 +247,13 @@ void loop()
             }
 
             end_program = true;
-            break; 
+            break;
+
+         case 9:
+            mqtt_Simple_sender("1");
+            
+            end_program = true;
+            break;
 
          default:
             Serial.println("You messed up the input somehow :( ");
