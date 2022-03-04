@@ -6,10 +6,8 @@
 
 #include <ArduinoMqttClient.h>
 
+#include <WiFiNINA.h>
 
-#if defined(ARDUINO_AVR_UNO_WIFI_REV2)
-  #include <WiFiNINA.h>
-#endif
 
   
 
@@ -50,6 +48,10 @@ extern unsigned long greenLEDtimer;
 
 
 extern const uint8_t servoPin;
+extern unsigned long servo_timer;
+extern int pos;
+extern const unsigned long servo_rotate_interval;
+
 
 
 
@@ -115,9 +117,10 @@ void toggleRedLED (void);
 void toggleGreenLED (void);
 void flashamberled(void);
 void DetectColour(void);
-void servo_rotating(void);
 void test_drive_in_a_square(uint8_t velocity);
 void reset_all_flags(void);
 void mqtt_Simple_receive(void);
 void mqtt_Simple_sender(String message);
 void read_from_wifi(void);
+void servo_forward (void);
+void servo_backward (void);

@@ -15,7 +15,7 @@ bool end_program = false;
 
 void setup()
 {
-    AFMS.begin(30); // defulat value was 16000, when frequency is set to 30 it tell motor to run with "jerks"
+    AFMS.begin();
     pinMode(amberLED, OUTPUT);
     pinMode(redLED, OUTPUT);
     pinMode(greenLED, OUTPUT);
@@ -25,6 +25,9 @@ void setup()
     
   
     myservo.attach(servoPin);
+    servo_timer = millis ();
+    pos = 0;
+    myservo.write(pos);
 
     
 
@@ -194,7 +197,9 @@ void loop()
 
          case 5:
 
-            servo_rotating();
+            servo_forward();
+            delay(3000);
+            servo_backward();
             
             Serial.println("I am rotating servo.");
 
