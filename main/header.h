@@ -119,4 +119,5 @@ void servo_rotating(void);
 void test_drive_in_a_square(uint8_t velocity);
 void reset_all_flags(void);
 void mqtt_Simple_receive(void);
+void mqtt_Simple_sender(String message);
 void read_from_wifi(void);
