@@ -15,7 +15,7 @@ bool end_program = false;
 
 void setup()
 {
-    AFMS.begin();
+    AFMS.begin(30);
     pinMode(amberLED, OUTPUT);
     pinMode(redLED, OUTPUT);
     pinMode(greenLED, OUTPUT);
