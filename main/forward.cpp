@@ -19,6 +19,14 @@ bool i_am_going_forward = false;
 
 void go_forward(uint8_t velocity)
 {
+      //reset_all_flags();
+      right_wheel_motor->setSpeed(velocity);
+      left_wheel_motor->setSpeed(velocity);
+      
+      right_wheel_motor->run(FORWARD);
+      left_wheel_motor->run(FORWARD);
+
+    /*
     if (i_am_going_forward)
       return;
 
@@ -37,5 +45,5 @@ void go_forward(uint8_t velocity)
       i_am_going_forward = true;
 
       // old_velocity = velocity;
-    }
+    }*/
 }
