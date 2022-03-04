@@ -15,7 +15,7 @@ bool end_program = false;
 
 void setup()
 {
-    AFMS.begin();
+    AFMS.begin(30); // defulat value was 16000, when frequency is set to 30 it tell motor to run with "jerks"
     pinMode(amberLED, OUTPUT);
     pinMode(redLED, OUTPUT);
     pinMode(greenLED, OUTPUT);
