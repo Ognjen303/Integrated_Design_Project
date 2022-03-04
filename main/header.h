@@ -64,6 +64,7 @@ extern bool i_am_turning_right;
 extern bool i_am_detecting_colour;
 extern bool i_am_detecting_red_colour ;
 extern bool i_am_detecting_blue_colour ;
+extern bool i_stopped;
 
 
 
@@ -84,11 +85,29 @@ extern const char topic[]; // if both the sender and receier are connected to th
 extern float angle, distance;
 
 
-void read_from_wifi(void);
+
+
+// ----------------------
+// files used in mqttSimpleReceive
+extern char ssid[];
+extern char pass[];
+
+
+extern WiFiClient wifiClient;
+extern MqttClient mqttClient;
+
+extern const char broker[];
+extern int        port; // non encrypted access
+extern const char topic[]; // if both the sender and receier are connected to the same topic, data will be sent
+
+extern float angle, distance;
+
+
+void stop_the_robot(void);
 void go_forward(uint8_t velocity);
 void go_backward(uint8_t velocity);
-void turn_right(void);
-void turn_left(void);
+void turn_right(uint8_t right_velocity);
+void turn_left(uint8_t left_velocity);
 void test_go_forward_and_back(uint8_t velocity);
 unsigned int read_integer_input(void);
 void toggleAmberLED (void);
@@ -100,3 +119,7 @@ void servo_rotating(void);
 void test_drive_in_a_square(uint8_t velocity);
 void reset_all_flags(void);
 void mqtt_Simple_receive(void);
+void mqtt_Simple_sender(String message);
+void read_from_wifi(void);
+void turn_left_to_angle(float angle, uint8_t left_velocity);
+void turn_right_to_angle(float angle, uint8_t right_velocity);
