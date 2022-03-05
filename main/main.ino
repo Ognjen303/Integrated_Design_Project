@@ -15,7 +15,7 @@ bool end_program = false;
 
 void setup()
 {
-    AFMS.begin(30); // defulat value was 16000, when frequency is set to 30 it tell motor to run with "jerks"
+    AFMS.begin(30); // default value was 1600, when frequency is set to 30 it tells motor to run with "jerks"
     pinMode(amberLED, OUTPUT);
     pinMode(redLED, OUTPUT);
     pinMode(greenLED, OUTPUT);
@@ -25,10 +25,9 @@ void setup()
     
   
     myservo.attach(servoPin);
-
+    myservo.write(0); //prevents servo from spinning significantly on power up to 120 deg(still goes to horizontal)
     
 
-    
     //Initialize serial and wait for port to open:
     Serial.begin(9600);
     while (!Serial) 
