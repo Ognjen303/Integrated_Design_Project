@@ -263,11 +263,11 @@ void loop()
                { 
                   if (angle > 0)  // checking whether the robot needs to be moved left or right
                   {  
-                     turn_left_to_angle(abs(angle), 90);
+                     turn_left(90);
                   }
                   else
                   {
-                     turn_right_to_angle(abs(angle), 90);
+                     turn_right(90);
                   }
                   unsigned long time_end_turn = millis(); //can declare this at top of main
                   while(millis() < time_end_turn + 1000) 
@@ -280,6 +280,14 @@ void loop()
                if (distance > 0.1) // move forward if the robot is more than 10cm away (angle is within threshold in order to exit previous while)
                { 
                   go_forward(255);
+               }
+
+               if(0) // start checking if I can see the block
+               {
+                  // check if I can see the block at all 
+                  // flash blue or red LED, acording to the block colour
+                  // pick up block
+                  // if block if picked up, raise flag to start going backwards
                }
             }
 
