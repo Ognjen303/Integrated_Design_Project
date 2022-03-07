@@ -33,7 +33,15 @@ extern Adafruit_DCMotor *right_wheel_motor;
 extern Adafruit_DCMotor *left_wheel_motor; 
 
 
+//------------------------------
+
+
 extern Servo myservo;
+
+extern const uint8_t servoPin;
+extern unsigned long servo_timer;
+extern int pos;
+extern const unsigned long servo_rotate_interval;
 
 
 
@@ -45,6 +53,12 @@ extern const unsigned long greenLEDinterval;
 extern unsigned long amberLEDtimer;
 extern unsigned long redLEDtimer;
 extern unsigned long greenLEDtimer;
+
+
+
+
+
+
 
 //------------------------------
 
@@ -121,3 +135,5 @@ void reset_all_flags(void);
 void mqtt_Simple_receive(void);
 void mqtt_Simple_sender(String message);
 void read_from_wifi(void);
+void servo_forward (void);
+void servo_backward (void);
