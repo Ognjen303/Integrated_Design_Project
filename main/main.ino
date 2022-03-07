@@ -257,30 +257,30 @@ void loop()
          case 11:
             while (1)
             {
-            read_from_wifi(); // read the angle and distance
+               read_from_wifi(); // read the angle and distance
 
-            while (abs(angle) > 10) // looping until the angle threshold is achieved
-            { 
-               if (angle > 0)  // checking whether the robot needs to be moved left or right
-               {  
-                  turn_left_to_angle(abs(angle), 90);
-               }
-               else
-               {
-                  turn_right_to_angle(abs(angle), 90);
-               }
-               unsigned long time_end_turn = millis(); //can declare this at top of main
-               while(millis() < time_end_turn + 1000) 
+               while (abs(angle) > 10) // looping until the angle threshold is achieved
                { 
-                  //1000ms to allow camera to catch up
+                  if (angle > 0)  // checking whether the robot needs to be moved left or right
+                  {  
+                     turn_left_to_angle(abs(angle), 90);
+                  }
+                  else
+                  {
+                     turn_right_to_angle(abs(angle), 90);
+                  }
+                  unsigned long time_end_turn = millis(); //can declare this at top of main
+                  while(millis() < time_end_turn + 1000) 
+                  { 
+                     //1000ms to allow camera to catch up
+                  }
+                  read_from_wifi(); // update parameters
                }
-               read_from_wifi(); // update parameters
-            }
 
-            if (distance > 0.1) // move forward if the robot is more than 10cm away (angle is within threshold in order to exit previous while)
-            { 
-               go_forward(255);
-            }
+               if (distance > 0.1) // move forward if the robot is more than 10cm away (angle is within threshold in order to exit previous while)
+               { 
+                  go_forward(255);
+               }
             }
 
             end_program = true;
