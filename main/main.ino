@@ -194,13 +194,16 @@ void loop()
 
          case 5:
 
-            servo_rotating();
+            servo_forward();
+            delay(3000);
+            servo_backward();
             
             Serial.println("I am rotating servo.");
 
             end_program = true;
 
             break;
+
 
          case 6:
 
