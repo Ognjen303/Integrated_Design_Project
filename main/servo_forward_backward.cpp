@@ -12,7 +12,6 @@ void servo_forward (void){
   Serial.println("I am in servo_forward");
   
   while (pos <= 180){
-      Serial.println("I am inside first if stetement of servo_forward");
 
     if ( (millis () - servo_timer) > servo_rotate_interval){
       servo_timer = millis ();
