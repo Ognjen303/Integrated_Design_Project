@@ -103,6 +103,7 @@ void setup()
     
     Serial.println("Choose mode in which to run robot.");
     Serial.println("TESTS:");
+    Serial.println("Press 0 to test the new colour sensors");
     Serial.println("Press 1 for go_forward_and_back");
     Serial.println("Press 2 for Helen's test.");
     Serial.println("Press 3 to go forward for 3 seconds and stop.");
