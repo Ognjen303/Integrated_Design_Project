@@ -18,9 +18,9 @@
 // -----double check you where you pluged in the led cables on arduino
 
 // D8 for amber, D9 for red, D10 for green led
-#define amberLED 8
-#define redLED  9
-#define greenLED  10
+#define amberLED 5
+#define redLED  6
+#define greenLED  7
 
 
 
