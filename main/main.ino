@@ -112,6 +112,7 @@ void setup()
   Serial.println("Press 7 to receive messages from Ioan/Adhi via topic");
   Serial.println("Press 8 to start driving!");
   Serial.println("Press 9 to send message via topic to Adhi.");
+  Serial.println("Press 11 to enter new and improved control system.");
 
   //velocity = 150;
   //velocity_of_right_wheel = 150;
@@ -255,28 +256,56 @@ void loop()
       end_program = true;
       break;
 
-    case 11:
+    case 10:
       while (1) {
+        turn_left(read_integer_input());
+      }
+
+      end_program = true;
+      break;
+
+    case 11:
+      while (1)
+      {
         read_from_wifi(); // read the angle and distance
 
-        while (abs(angle) < 10) { // looping until the angle threshold is achieved
-          if (angle > 0) { // checking whether the robot needs to be moved left or right
+        while (abs(angle) > 5) // looping until the angle threshold is achieved
+        {
+          if (angle > 0)  // checking whether the robot needs to be moved left or right
+          {
             turn_left_to_angle(abs(angle), 90);
-            delay(1000); // delay to allow the camera to catch up
           }
-          else {
+          else
+          {
             turn_right_to_angle(abs(angle), 90);
-            delay(1000); // delay  to allow camera to catch up
+          }
+          unsigned long time_end_turn = millis(); //can declare this at top of main
+          while (millis() < time_end_turn + 1000)
+          {
+            //1000ms to allow camera to catch up
           }
           read_from_wifi(); // update parameters
         }
-
-        if (distance > 0.1) { // move forward once the
+        
+        if ((distance > 0.1) && (looking_for_block == false)) // move forward if the robot is more than 10cm away (angle is within threshold in order to exit previous while)
+        {
           go_forward(255);
         }
 
-        stop_the_robot();
+        if (looking_for_block == true) {
+          move_forward_given_distance(-1 * distance, 125); //moves forward by expected distance
+        }
+ 
+        if ((distance > -0.1) && (looking_for_block == true)) // start checking if I can see the block
+        {
+
+          // check if I can see the block at all
+          // flash blue or red LED, acording to the block colour
+          // pick up block
+          // if block if picked up, raise flag to start going backwards
+        }
       }
+
       end_program = true;
       break;
 
