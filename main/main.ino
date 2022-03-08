@@ -325,13 +325,15 @@ void loop()
           go_forward(255);
           }*/
 
-        if ((distance <= -0.1) && (looking_for_block == true)) {
+        if ((distance < -0.1) && (looking_for_block == true)) {
           move_forward_given_distance(-1 * distance, 125); //moves forward by expected distance
         }
 
-        while ((distance > -0.1) && (looking_for_block == true)) // start checking if I can see the block
+        while ((distance >= -0.1) && (looking_for_block == true)) // start checking if I can see the block
         {
+          stop_the_robot();
           send_to_wifi("Insert colour here");
+          delay(3000);
           /*if (distance_sensorValue > 800){ // block is close enough
 
             stop_the_robot(); // stop the robot
