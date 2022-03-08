@@ -131,6 +131,20 @@ void loop()
         
       switch(mode)
       { 
+         case 0:
+            // this tests if the LEDs are flashing as expected when detecing colour of block
+            Serial.println("I am in case 0.");
+            while(1)
+            {
+              flashamberled();
+            
+             
+              DetectColour();
+            }
+
+            end_program = true;
+            break;
+            
          case 1:
             Serial.println("What is the velocity you wish to go at in test case 1?");
             Serial.println("Input a integer between 0 and 255, where 255 is max velocity.");
