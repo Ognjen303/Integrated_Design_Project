@@ -331,7 +331,7 @@ void loop()
 
         while ((distance > -0.1) && (looking_for_block == true)) // start checking if I can see the block
         {
-          send_to_wifi();
+          send_to_wifi("Insert colour here");
           /*if (distance_sensorValue > 800){ // block is close enough
 
             stop_the_robot(); // stop the robot
@@ -343,6 +343,15 @@ void loop()
           // pick up block
           // if block if picked up, raise flag to start going backwards
         }
+      }
+
+      end_program = true;
+      break;
+
+    case 12:
+      while (1) {
+        send_to_wifi("hello there");
+        delay(5000);
       }
 
       end_program = true;
