@@ -11,9 +11,7 @@
   #include <WiFiNINA.h>
 #endif
 
-  
-
-
+ 
 // -----Here you define the digital led pin numbers
 // -----double check you where you pluged in the led cables on arduino
 
@@ -21,12 +19,6 @@
 #define amberLED 8
 #define redLED  9
 #define greenLED  10
-
-
-
-
-
-
 
 extern Adafruit_MotorShield AFMS;
 extern Adafruit_DCMotor *right_wheel_motor;
@@ -51,9 +43,6 @@ extern unsigned long greenLEDtimer;
 
 extern const uint8_t servoPin;
 
-
-
-
 extern uint8_t old_velocity;
 
 
@@ -62,13 +51,10 @@ extern bool i_am_going_backward;
 extern bool i_am_turning_left;
 extern bool i_am_turning_right;
 extern bool i_am_detecting_colour;
-extern bool i_am_detecting_red_colour ;
-extern bool i_am_detecting_blue_colour ;
+extern bool i_am_detecting_red_colour;
+extern bool i_am_detecting_blue_colour;
 extern bool i_stopped;
 
-
-
-
 // ----------------------
 // files used in mqttSimpleReceive
 extern char ssid[];
@@ -101,6 +87,8 @@ extern int        port; // non encrypted access
 extern const char topic[]; // if both the sender and receier are connected to the same topic, data will be sent
 
 extern float angle, distance;
+
+extern bool looking_for_block;
 
 
 void stop_the_robot(void);
@@ -123,3 +111,4 @@ void mqtt_Simple_sender(String message);
 void read_from_wifi(void);
 void turn_left_to_angle(float angle, uint8_t left_velocity);
 void turn_right_to_angle(float angle, uint8_t right_velocity);
+void move_forward_given_distance(float forward_distance, uint8_t forward_velocity);
