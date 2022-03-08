@@ -15,7 +15,7 @@ bool end_program = false;
 
 void setup()
 {
-  AFMS.begin(30);
+  AFMS.begin(50);
   pinMode(amberLED, OUTPUT);
   pinMode(redLED, OUTPUT);
   pinMode(greenLED, OUTPUT);
@@ -26,7 +26,7 @@ void setup()
 
   myservo.attach(servoPin);
 
-
+  //servo_backward();
 
 
   //Initialize serial and wait for port to open:
@@ -195,7 +195,7 @@ void loop()
 
     case 5:
 
-      servo_rotating();
+      //servo_rotating();
 
       Serial.println("I am rotating servo.");
 
@@ -229,7 +229,7 @@ void loop()
       while (1)
       {
         read_from_wifi();
-        while (abs(angle) > 12)
+        while (abs(angle) > 9)
         {
           read_from_wifi();
           if (angle > 0)
@@ -269,7 +269,39 @@ void loop()
       {
         read_from_wifi(); // read the angle and distance
 
-        while (abs(angle) > 5) // looping until the angle threshold is achieved
+        while ((abs(angle) > 9) && (looking_for_block == false)) // looping until the angle threshold is achieved
+        {
+          read_from_wifi();
+          if (angle > 0)
+          {
+            turn_left(90);
+          }
+          else
+          {
+            turn_right(90);
+          }
+        }
+        if (distance >= 0.1)
+        {
+          go_forward(255);
+        }
+        /*if (angle > 0)  // checking whether the robot needs to be moved left or right
+          {
+          turn_left_to_angle(abs(angle), 90);
+          }
+          else
+          {
+          turn_right_to_angle(abs(angle), 90);
+          }
+          unsigned long time_end_turn = millis(); //can declare this at top of main
+          while (millis() < time_end_turn + 1000)
+          {
+          //1000ms to allow camera to catch up
+          }
+          read_from_wifi(); // update parameters*/
+
+
+        while ((abs(angle) > 4) && (looking_for_block == true)) // using increased accuracy when looking for block
         {
           if (angle > 0)  // checking whether the robot needs to be moved left or right
           {
@@ -286,19 +318,26 @@ void loop()
           }
           read_from_wifi(); // update parameters
         }
-        
-        if ((distance > 0.1) && (looking_for_block == false)) // move forward if the robot is more than 10cm away (angle is within threshold in order to exit previous while)
-        {
-          go_forward(255);
-        }
 
-        if (looking_for_block == true) {
+
+        /*if ((distance > 0.1) && (looking_for_block == false)) // move forward if the robot is more than 10cm away (angle is within threshold in order to exit previous while)
+          {
+          go_forward(255);
+          }*/
+
+        if ((distance <= -0.1) && (looking_for_block == true)) {
           move_forward_given_distance(-1 * distance, 125); //moves forward by expected distance
         }
- 
-        if ((distance > -0.1) && (looking_for_block == true)) // start checking if I can see the block
-        {
 
+        while ((distance > -0.1) && (looking_for_block == true)) // start checking if I can see the block
+        {
+          send_to_wifi();
+          /*if (distance_sensorValue > 800){ // block is close enough
+
+            stop_the_robot(); // stop the robot
+
+
+            }*/
           // check if I can see the block at all
           // flash blue or red LED, acording to the block colour
           // pick up block
