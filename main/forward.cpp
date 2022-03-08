@@ -14,6 +14,7 @@ uint8_t old_velocity = 0;
 // could be later on usefull for debuging
 // i_am_going_forward can be set to true only and the end of the else statement
 // please do not set it as true anywhere else
+
 bool i_am_going_forward = false; 
 
 
@@ -46,4 +47,18 @@ void go_forward(uint8_t velocity)
 
       // old_velocity = velocity;
     }*/
+}
+
+void move_forward_given_distance(float forward_distance, uint8_t forward_velocity) {
+  unsigned long start_forward_move = millis(); // record time that the turning is started
+  
+  //Serial.println(1000*(rotate_angle*6.0/90.0));
+
+  Serial.println(int(1000 * (forward_distance * 19)));
+  while (millis() - start_forward_move < int(1000 * (forward_distance * 7.6))) { // 7.6 s/metre gives the time to move the given distance
+    go_forward(forward_velocity); // turning the robot left
+  }
+  
+  //Serial.println("exiting left turn");
+  stop_the_robot(); // stop turning
 }
