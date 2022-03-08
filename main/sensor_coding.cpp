@@ -82,63 +82,77 @@ void DetectColour(void)
   uint16_t distance_sensorValue = analogRead(A0); // value between 0 and 1023
   uint16_t colour_sensorValue = analogRead(A1);   // value between 0 and 1023
   
-  Serial.println("entering the function");
+  //Serial.println("entering the DetectColour funciton");
 
-  Serial.println(distance_sensorValue);
-  Serial.println(colour_sensorValue);
+  //Serial.println("distance to sensor is:");
+  //Serial.println(distance_sensorValue);
+  //Serial.println("colour sensor value is:");
+  // Serial.println(colour_sensorValue);
 
   //if analog reading larger than 800, close enough, robot stopped, start to detect colour
+  
   if (distance_sensorValue > 800)
   {
     
     // stop the car for the colour detector to detect colour
-    right_wheel_motor->run(RELEASE);
-    left_wheel_motor->run(RELEASE);
 
     reset_all_flags();
+
+    
+    stop_the_robot();
+
+    //Serial.println("I have stopped:");
+    //Serial.println(i_stopped);
+    
     
     // detecting colour
     i_am_detecting_colour = true;  
+
+    //Serial.println("I am deceting colour:");
+    //Serial.println(i_am_detecting_colour);
     
 
-    // Red colour
-    if (colour_sensorValue > 250)
+    unsigned long start_timer_and_count_5_seconds = millis();
+
+    // loop for 5 seconds
+    while(millis() < start_timer_and_count_5_seconds + 5000)
     {
-      reset_all_flags();
-      i_am_detecting_red_colour = true;
+      //Serial.println("I am in while loop of detectingColour, colour sensor value is:");
+      Serial.println(colour_sensorValue);
       
-      
-      digitalWrite (greenLED, LOW);
-      // analog for red is about 300 and blue about 160, test after integration
-      // red led on in this case
-      if ( (millis () - redLEDtimer) >= redLEDinterval){
-        toggleRedLED ();
+      // Red colour
+      if (colour_sensorValue > 280)
+      {
+        reset_all_flags();
+        i_am_detecting_red_colour = true;
+        
+        
+        digitalWrite (greenLED, LOW);
+        // analog for red is about 300 and blue about 160, test after integration
+        // red led on in this case
+        digitalWrite (redLED, HIGH);
+        
       }
-      
-    }
-
-    // Green colour
-    else if (100 < colour_sensorValue < 200)
-    {
-      reset_all_flags();
-      i_am_detecting_blue_colour = true;
-
-      
-      // green led on in this case
-      digitalWrite (redLED, LOW);
-      if ( (millis () - greenLEDtimer) >= greenLEDinterval){
-        toggleGreenLED ();
+  
+      // Green colour
+      else if (50 < colour_sensorValue < 200)
+      {
+        reset_all_flags();
+        i_am_detecting_blue_colour = true;
+  
+        digitalWrite (redLED, LOW);
+        // green led on in this case
+        digitalWrite (greenLED, HIGH);
       }
+  
+      
+      
+      else{
+        // indicates colour detector does not work
+        // any solution???
+      
+      } 
     }
-
-    
-    /*
-     else{
-      // indicates colour detector does not work
-      // any solution???
-    
-    } */
-
   }
 }
 // after detecting colour, wait for a few secs and toggle the servo/ turn off the leds?
