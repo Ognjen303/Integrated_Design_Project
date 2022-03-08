@@ -44,7 +44,7 @@ void read_from_wifi(void) {
   {
     if (mqttClient.available()) {
       incomingStr = mqttClient.readString();
-      Serial.println(incomingStr);
+      //Serial.println(incomingStr);
     }
     for (int i = 0; i <= incomingStr.length(); i++) {
       if (incomingStr.substring(i, i + 1) == ";") {
@@ -55,6 +55,8 @@ void read_from_wifi(void) {
       }
       if (distance < 0) {
         looking_for_block = true;
+        //delay(1500);
+        //Serial.println("looking for block");
       }
       else {
         looking_for_block = false;
