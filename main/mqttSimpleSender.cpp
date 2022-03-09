@@ -30,7 +30,7 @@ void mqtt_Simple_sender(String message)
         Serial.println(count);
         */
   
-        Serial.println(message);      
+        //Serial.println(message);      
         
         // send message, the Print interface can be used to set the message contents
         mqttClient.beginMessage(topic);
