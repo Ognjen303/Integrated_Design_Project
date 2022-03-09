@@ -6,33 +6,31 @@ int pos;
 const unsigned long servo_forward_interval = 15;
 const unsigned long servo_backward_interval = 16;
 unsigned long servo_timer;
+int final_angle;
 
 
-void servo_forward (void)
-{
-
-  Serial.println("I am in servo_forward");
-  
-  while (pos <= 110)
-  {
-    //Serial.println("I am inside first if stetement of servo_forward");
-
-    if ( (millis () - servo_timer) > servo_forward_interval){
-      servo_timer = millis ();
-      pos += 1;
-      myservo.write(pos);
-      //Serial.println(pos);
+void servo_forward (void){
+  Serial.println(myservo.read());
+  for (pos = 0; pos <= final_angle; pos += 1)
+  { // goes from 0 degrees to 90 degrees
+    // in steps of 1 degree
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    servo_timer = millis();
+    while( (millis () - servo_timer) < 15){
+      flashamberled();
     }
   }
 }
 
 void servo_backward (void){
-  while (0 <= pos <= 111){
-    if ( (millis () - servo_timer) > servo_backward_interval){
-      servo_timer = millis ();
-      pos -= 1;
-      myservo.write(pos);
-      Serial.println(pos);
+  Serial.println(myservo.read());
+  for (pos = final_angle; pos >= 0; pos -= 1)
+  { // goes from 0 degrees to 90 degrees
+    // in steps of 1 degree
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    servo_timer = millis();
+    while( (millis () - servo_timer) < 15){
+      flashamberled();
     }
   }
 }

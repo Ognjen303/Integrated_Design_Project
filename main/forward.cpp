@@ -58,6 +58,7 @@ void move_forward_given_distance(float forward_distance, uint8_t forward_velocit
   while (millis() - start_forward_move < int(1000 * (forward_distance * 15))) { // 19 s/metre gives the time to move the given distance
     go_forward(forward_velocity); // turning the robot left
     read_from_wifi();
+    flashamberled();
   }
   
   //Serial.println("exiting left turn");
