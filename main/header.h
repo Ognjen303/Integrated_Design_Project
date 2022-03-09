@@ -51,8 +51,8 @@ extern bool i_am_going_backward;
 extern bool i_am_turning_left;
 extern bool i_am_turning_right;
 extern bool i_am_detecting_colour;
-extern bool i_am_detecting_red_colour;
-extern bool i_am_detecting_blue_colour;
+extern bool i_am_detecting_red_colour ;
+extern bool i_am_detecting_blue_colour ;
 extern bool i_stopped;
 
 // ----------------------

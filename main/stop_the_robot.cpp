@@ -20,5 +20,5 @@ void stop_the_robot(void)
       left_wheel_motor->run(RELEASE);
   
       i_stopped = true;
-    }*/
+    }
 }
