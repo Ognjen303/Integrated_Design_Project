@@ -33,11 +33,13 @@
 #include "header.h"
 
 String incomingStr;
+bool looking_for_block;
 
 void read_from_wifi(void) {
-  
+
   incomingStr = "";
   int messageSize = mqttClient.parseMessage();
+
   if (messageSize)
   {
     if (mqttClient.available()) {
@@ -50,6 +52,14 @@ void read_from_wifi(void) {
         distance = incomingStr.substring(i + 1, incomingStr.length()).toFloat();
         //Serial.println(angle);
         //break;
+      }
+      if (distance < 0) {
+        looking_for_block = true;
+        //delay(1500);
+        //Serial.println("looking for block");
+      }
+      else {
+        looking_for_block = false;
       }
     }
   }
