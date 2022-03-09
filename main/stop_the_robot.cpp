@@ -21,4 +21,5 @@ void stop_the_robot(void)
   
       i_stopped = true;
     }
+    */
 }
