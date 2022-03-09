@@ -121,7 +121,7 @@ void DetectColour(void)
       Serial.println(colour_sensorValue);
       
       // Red colour
-      if (colour_sensorValue > 250)
+      if (colour_sensorValue > 280)
       {
         reset_all_flags();
         i_am_detecting_red_colour = true;

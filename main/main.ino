@@ -15,7 +15,7 @@ bool end_program = false;
 
 void setup()
 {
-    AFMS.begin(50); // defulat value was 16000, when frequency is set to 50 it tell motor to run with "jerks"
+    AFMS.begin(30); // defulat value was 16000, when frequency is set to 30 it tell motor to run with "jerks"
     pinMode(amberLED, OUTPUT);
     pinMode(redLED, OUTPUT);
     pinMode(greenLED, OUTPUT);
@@ -27,11 +27,11 @@ void setup()
     myservo.attach(servoPin);
 
     
-    //servo_backward();
+
     
     //Initialize serial and wait for port to open:
     Serial.begin(9600);
-    while (!Serial)
+    while (!Serial) 
     {
     ; // wait for serial port to connect. Needed for native USB port only
     }
@@ -103,7 +103,6 @@ void setup()
     
     Serial.println("Choose mode in which to run robot.");
     Serial.println("TESTS:");
-    Serial.println("Press 0 to test the new colour sensors");
     Serial.println("Press 1 for go_forward_and_back");
     Serial.println("Press 2 for Helen's test.");
     Serial.println("Press 3 to go forward for 3 seconds and stop.");
@@ -113,9 +112,10 @@ void setup()
     Serial.println("Press 7 to receive messages from Ioan/Adhi via topic");
     Serial.println("Press 8 to start driving!");
     Serial.println("Press 9 to send message via topic to Adhi.");
-    Serial.println("Press 11 to enter new and improved control system.");
     
-    
+    //velocity = 150;
+    //velocity_of_right_wheel = 150;
+    //velocity_of_left_wheel = 150;
     
 }
 
@@ -277,103 +277,37 @@ void loop()
             {
                read_from_wifi(); // read the angle and distance
 
-               while ((abs(angle) > 9) && (looking_for_block == false)) // looping until the angle threshold is achieved
-               {
-                  read_from_wifi();
-                  if (angle > 0)
-                  {
+               while (abs(angle) > 10) // looping until the angle threshold is achieved
+               { 
+                  if (angle > 0)  // checking whether the robot needs to be moved left or right
+                  {  
                      turn_left(90);
                   }
                   else
                   {
                      turn_right(90);
                   }
-               }
-               if (distance >= 0.1)
-               {
-                  go_forward(255);
-               }
-               /*
-               if (angle > 0)  // checking whether the robot needs to be moved left or right
-               {
-                  turn_left_to_angle(abs(angle), 90);
-               }
-               else
-               {
-                  turn_right_to_angle(abs(angle), 90);
-               }
-               unsigned long time_end_turn = millis(); //can declare this at top of main
-               while (millis() < time_end_turn + 1000)
-               {
-                  //1000ms to allow camera to catch up
-               }
-               read_from_wifi(); // update parameters
-               */
-
-               
-
-               while ((abs(angle) > 4) && (looking_for_block == true)) // using increased accuracy when looking for block
-               {
-                  if (angle > 0)  // checking whether the robot needs to be moved left or right
-                  {
-                     turn_left_to_angle(abs(angle), 90);
-                  }
-                  else
-                  {
-                     turn_right_to_angle(abs(angle), 90);
-                  }
-
                   unsigned long time_end_turn = millis(); //can declare this at top of main
-
-                  while (millis() < time_end_turn + 1000)
-                  {
+                  while(millis() < time_end_turn + 1000) 
+                  { 
                      //1000ms to allow camera to catch up
                   }
                   read_from_wifi(); // update parameters
                }
 
-
-               /*if ((distance > 0.1) && (looking_for_block == false)) 
-               // move forward if the robot is more than 10cm away (angle is within threshold in order to exit previous while)
-                  {
+               if (distance > 0.1) // move forward if the robot is more than 10cm away (angle is within threshold in order to exit previous while)
+               { 
                   go_forward(255);
-                  }*/
-
-               if ((distance < -0.1) && (looking_for_block == true))
-               {
-                  move_forward_given_distance(-1 * distance, 125); //moves forward by expected distance
                }
 
-               while ((distance >= -0.1) && (looking_for_block == true)) // start checking if I can see the block
+               if(0) // start checking if I can see the block
                {
-                  stop_the_robot();
-                  send_to_wifi("Insert colour here");
-                  delay(3000);
-                  /*if (distance_sensorValue > 800){ // block is close enough
-
-                     stop_the_robot(); // stop the robot
-
-
-                     }*/
-                  // check if I can see the block at all
+                  // check if I can see the block at all 
                   // flash blue or red LED, acording to the block colour
                   // pick up block
                   // if block if picked up, raise flag to start going backwards
                }
             }
-
-            end_program = true;
-            break;
-
-         case 12:
-            while (1) 
-            {
-               send_to_wifi("hello there");
-               delay(5000);
-            }
-
-      end_program = true;
-      break;
 
             end_program = true;
             break;

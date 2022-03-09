@@ -76,12 +76,11 @@ extern bool i_am_going_backward;
 extern bool i_am_turning_left;
 extern bool i_am_turning_right;
 extern bool i_am_detecting_colour;
-extern bool i_am_detecting_red_colour;
-extern bool i_am_detecting_blue_colour;
+extern bool i_am_detecting_red_colour ;
+extern bool i_am_detecting_blue_colour ;
 extern bool i_stopped;
 
 
-extern bool looking_for_block;
 
 
 // ----------------------
@@ -138,11 +137,3 @@ void mqtt_Simple_sender(String message);
 void read_from_wifi(void);
 void servo_forward (void);
 void servo_backward (void);
-
-//----- IOANS NEW FUNCTIONS --------
-
-void read_from_wifi(void);
-void send_to_wifi(String send_message);
-void turn_left_to_angle(float angle, uint8_t left_velocity);
-void turn_right_to_angle(float angle, uint8_t right_velocity);
-void move_forward_given_distance(float forward_distance, uint8_t forward_velocity);

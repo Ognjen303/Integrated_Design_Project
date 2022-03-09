@@ -11,44 +11,21 @@ bool i_am_turning_right = false;
 
 void turn_right(uint8_t right_velocity)
 {
-
-  //reset_all_flags();
-
-  right_wheel_motor->setSpeed(100);
-  left_wheel_motor->setSpeed(100);
-
-  right_wheel_motor->run(FORWARD);
-  left_wheel_motor->run(BACKWARD);
-
-  /*if(i_am_turning_right)
-    return;
+    if(i_am_turning_right)
+      return;
 
     else
     {
-    reset_all_flags();
+      reset_all_flags();
 
+      
+      right_wheel_motor->setSpeed(100);
+      left_wheel_motor->setSpeed(100);
+      
+      right_wheel_motor->run(FORWARD);
+      left_wheel_motor->run(BACKWARD);
 
-    right_wheel_motor->setSpeed(100);
-    left_wheel_motor->setSpeed(100);
+      i_am_turning_right = true;
 
-    right_wheel_motor->run(FORWARD);
-    left_wheel_motor->run(BACKWARD);
-
-    i_am_turning_right = true;
-
-    }*/
-}
-
-void turn_right_to_angle(float rotate_angle, uint8_t right_velocity) {
-  unsigned long start_right_turn = millis(); // record time that the turning is started
-  
-  //Serial.println(1000*(rotate_angle*6.0/90.0));
-
-  while (millis() - start_right_turn < int(1000 * (rotate_angle * 10 / 90.0))) { // using while loop to measure the time
-    turn_right(right_velocity); // turning the robot left
-    read_from_wifi();
-  }
-  
-  //Serial.println("exiting left turn");
-  stop_the_robot(); // stop turning
+    }
 }
