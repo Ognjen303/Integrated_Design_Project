@@ -9,7 +9,7 @@ bool i_am_going_backward = false;
 
 void go_backward(uint8_t velocity)
 {
-    //reset_all_flags();
+      //reset_all_flags();
       right_wheel_motor->setSpeed(velocity);
       left_wheel_motor->setSpeed(velocity);
       

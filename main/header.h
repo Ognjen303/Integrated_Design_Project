@@ -11,37 +11,21 @@
   #include <WiFiNINA.h>
 #endif
 
-  
-
-
+ 
 // -----Here you define the digital led pin numbers
 // -----double check you where you pluged in the led cables on arduino
 
 // D8 for amber, D9 for red, D10 for green led
-#define amberLED 5
-#define redLED  6
-#define greenLED  7
-
-
-
-
-
-
+#define amberLED 8
+#define redLED  9
+#define greenLED  10
 
 extern Adafruit_MotorShield AFMS;
 extern Adafruit_DCMotor *right_wheel_motor;
 extern Adafruit_DCMotor *left_wheel_motor; 
 
 
-//------------------------------
-
-
 extern Servo myservo;
-
-extern const uint8_t servoPin;
-extern unsigned long servo_timer;
-extern int pos;
-extern const unsigned long servo_rotate_interval;
 
 
 
@@ -54,19 +38,10 @@ extern unsigned long amberLEDtimer;
 extern unsigned long redLEDtimer;
 extern unsigned long greenLEDtimer;
 
-
-
-
-
-
-
 //------------------------------
 
 
 extern const uint8_t servoPin;
-
-
-
 
 extern uint8_t old_velocity;
 
@@ -80,42 +55,40 @@ extern bool i_am_detecting_red_colour;
 extern bool i_am_detecting_blue_colour;
 extern bool i_stopped;
 
+// ----------------------
+// files used in mqttSimpleReceive
+extern char ssid[];
+extern char pass[];
+
+
+extern WiFiClient wifiClient;
+extern MqttClient mqttClient;
+
+extern const char broker[];
+extern int        port; // non encrypted access
+extern const char topic[]; // if both the sender and receier are connected to the same topic, data will be sent
+
+extern float angle, distance;
+
+
+
+
+// ----------------------
+// files used in mqttSimpleReceive
+extern char ssid[];
+extern char pass[];
+
+
+extern WiFiClient wifiClient;
+extern MqttClient mqttClient;
+
+extern const char broker[];
+extern int        port; // non encrypted access
+extern const char topic[]; // if both the sender and receier are connected to the same topic, data will be sent
+
+extern float angle, distance;
 
 extern bool looking_for_block;
-
-
-// ----------------------
-// files used in mqttSimpleReceive
-extern char ssid[];
-extern char pass[];
-
-
-extern WiFiClient wifiClient;
-extern MqttClient mqttClient;
-
-extern const char broker[];
-extern int        port; // non encrypted access
-extern const char topic[]; // if both the sender and receier are connected to the same topic, data will be sent
-
-extern float angle, distance;
-
-
-
-
-// ----------------------
-// files used in mqttSimpleReceive
-extern char ssid[];
-extern char pass[];
-
-
-extern WiFiClient wifiClient;
-extern MqttClient mqttClient;
-
-extern const char broker[];
-extern int        port; // non encrypted access
-extern const char topic[]; // if both the sender and receier are connected to the same topic, data will be sent
-
-extern float angle, distance;
 
 
 void stop_the_robot(void);
@@ -136,13 +109,9 @@ void reset_all_flags(void);
 void mqtt_Simple_receive(void);
 void mqtt_Simple_sender(String message);
 void read_from_wifi(void);
-void servo_forward (void);
-void servo_backward (void);
-
-//----- IOANS NEW FUNCTIONS --------
-
-void read_from_wifi(void);
 void send_to_wifi(String send_message);
 void turn_left_to_angle(float angle, uint8_t left_velocity);
 void turn_right_to_angle(float angle, uint8_t right_velocity);
 void move_forward_given_distance(float forward_distance, uint8_t forward_velocity);
+void servo_forward (void);
+void servo_backward (void);
