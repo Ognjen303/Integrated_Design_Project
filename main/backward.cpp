@@ -17,6 +17,7 @@ void go_backward(uint8_t velocity)
       left_wheel_motor->run(BACKWARD);
     // velocity has value between 0 and 255
 
+    /*
     if (i_am_going_backward)
         return;
 
@@ -35,5 +36,5 @@ void go_backward(uint8_t velocity)
 
       i_am_going_backward = true;
 
-    }
+    }*/
 }
