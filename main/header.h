@@ -30,7 +30,7 @@ extern unsigned long servo_timer;
 extern int pos;
 extern const unsigned long servo_forward_interval;
 extern const unsigned long servo_backward_interval;
-extern int final_angle;
+extern const uint16_t final_angle;
 extern uint16_t distance_sensorValue;
 extern uint16_t colour_sensorValue;
 

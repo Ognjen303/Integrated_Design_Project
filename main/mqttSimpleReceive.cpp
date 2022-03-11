@@ -33,7 +33,10 @@ MqttClient mqttClient(wifiClient);
 
 
 
-const char broker[] = "test.mosquitto.org";
+const char broker[] = "broker.hivemq.com";
+//const char broker[] = "test.mosquitto.org";
+//const char broker[] = "public.mqtthq.com";
+
 int        port     = 1883; // non encrypted access
 const char topic[]  = "IDP211"; // if both the sender and receier are connected to the same topic, data will be sent
 

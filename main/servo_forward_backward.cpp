@@ -6,7 +6,7 @@ int pos;
 const unsigned long servo_forward_interval = 15;
 const unsigned long servo_backward_interval = 16;
 unsigned long servo_timer;
-int final_angle;
+const uint16_t final_angle = 140;
 
 
 void servo_forward (void){
@@ -19,6 +19,10 @@ void servo_forward (void){
     while( (millis () - servo_timer) < 15){
       flashamberled();
     }
+  }
+  Serial.println(myservo.read() );
+  if (abs(myservo.read() - final_angle) > 2){
+    Serial.println("servo blocked, no pun intended.");
   }
 }
 

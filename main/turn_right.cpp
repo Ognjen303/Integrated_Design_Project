@@ -14,11 +14,11 @@ void turn_right(uint8_t right_velocity)
 
   //reset_all_flags();
 
-  right_wheel_motor->setSpeed(100);
-  left_wheel_motor->setSpeed(100);
+  right_wheel_motor->setSpeed(right_velocity);
+  left_wheel_motor->setSpeed(right_velocity);
 
-  right_wheel_motor->run(FORWARD);
-  left_wheel_motor->run(BACKWARD);
+  right_wheel_motor->run(BACKWARD);
+  left_wheel_motor->run(FORWARD);
 
   /*if(i_am_turning_right)
     return;

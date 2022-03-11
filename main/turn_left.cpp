@@ -19,8 +19,8 @@ void turn_left(uint8_t left_velocity)
   right_wheel_motor->setSpeed(left_velocity);                   // velocity_of_right_wheel
   left_wheel_motor->setSpeed(left_velocity);                    // velocity_of_left_wheel
 
-  right_wheel_motor->run(BACKWARD);
-  left_wheel_motor->run(FORWARD);
+  right_wheel_motor->run(FORWARD);
+  left_wheel_motor->run(BACKWARD);
 
   /*if(i_am_turning_left)
     return;
