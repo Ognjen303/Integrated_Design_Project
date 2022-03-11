@@ -47,7 +47,6 @@ void turn_right_to_angle(float rotate_angle, uint8_t right_velocity) {
   while (millis() - start_right_turn < int(1000 * (rotate_angle * 10 / 90.0))) { // using while loop to measure the time
     turn_right(right_velocity); // turning the robot left
     read_from_wifi();
-    flashamberled();
   }
   
   //Serial.println("exiting left turn");

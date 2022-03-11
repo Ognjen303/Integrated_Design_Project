@@ -1,16 +1,22 @@
 #include "header.h"
 
-// initially set the sensor working and colour detector not working
-bool sensor_status = true;
-bool colour_detector = false;
+// set to true if robot is detecting a colour of the block
+bool i_am_detecting_colour = false; // flag is true if I am still trying to detect colour
+bool i_am_detecting_red_colour = false;
+bool i_am_detecting_blue_colour = false;
 
 
 // Time periods of blinks in milliseconds (1000 to a second).
 const unsigned long amberLEDinterval = 500;
+const unsigned long redLEDinterval = 200;
+const unsigned long greenLEDinterval = 200;
 
 
 // Variable holding the timer value so far. One for each "Timer"
 unsigned long amberLEDtimer;
+unsigned long redLEDtimer;
+unsigned long greenLEDtimer;
+
 
 
 // code for toggle leds/ flashing leds
@@ -26,112 +32,137 @@ void toggleAmberLED (void)
   }  // end of toggleRedLED
 
 
+  
+void toggleRedLED (void)
+  {
+   if (digitalRead (redLED) == LOW)
+      digitalWrite (redLED, HIGH);
+   else
+      digitalWrite (redLED, LOW);
+
+  // remember when we toggled it
+  redLEDtimer = millis ();  
+  }  // end of toggleRedLED
+
+ 
+void toggleGreenLED (void)
+  {
+   if (digitalRead (greenLED) == LOW)
+      digitalWrite (greenLED, HIGH);
+   else
+      digitalWrite (greenLED, LOW);
+
+  // remember when we toggled it
+  greenLEDtimer = millis ();  
+  }  // end of toggleGreenLED
+
+
+
 
 // flashing amber light in 2HZ
 void flashamberled(void){
   
-  //Serial.println("I am inside of flashamberled");
-  //Serial.println(amberLEDinterval);
+  Serial.println("I am inside of flashamberled");
+  Serial.println(amberLEDinterval);
+
   if ( (millis () - amberLEDtimer) >= amberLEDinterval){
     toggleAmberLED ();
   }
 }
 
-// stop/start the sensor system (stopped if servo already rotated)
-void ToggleDetectingSystem(void) 
-{
-  if (pos == final_angle)
-  { 
-  ! sensor_status;
-  }
-}
 
-// stop/start colour sensor 
-void ToggleColourSensor(void) 
-{
-  uint16_t distance_sensorValue = analogRead(A0); // value between 0 and 1023
-  Serial.println(distance_sensorValue);
-  //if analog reading larger than 700, close enough, robot stopped, start to detect colour
-  if (distance_sensorValue > 700 && sensor_status)
-  {
-   colour_detector;
-  }
-  else if (distance_sensorValue <= 700 && sensor_status)
-  {
-    unsigned long time_go_forward_distance = millis();
-    while (millis() < time_go_forward_distance + 1000)
-    {
-      // robot goes forward for 1 second
-      go_forward(100);
-    } 
-  }
-}
+
+
 
 //main code for color detector
 
 void DetectColour(void) 
 {
   // reading analog value from arduino, A0 for distance sensor, A1 for colour detector 
-  uint16_t colour_sensorValue = analogRead(A1);   // value between 0 and 1023
   
+  uint16_t distance_sensorValue = analogRead(A0); // value between 0 and 1023
+  uint16_t colour_sensorValue = analogRead(A1);   // value between 0 and 1023
   
   Serial.println("entering the function");
 
+  Serial.println("distance to sensor is:");
+  Serial.println(distance_sensorValue);
+  Serial.println("colour sensor value is:");
+  Serial.println(colour_sensorValue);
 
   //if analog reading larger than 800, close enough, robot stopped, start to detect colour
-  if (colour_detector)
+  if (distance_sensorValue > 800)
   {
     
     // stop the car for the colour detector to detect colour
 
-    stop_the_robot();
-    
-    // detecting colour   
+    reset_all_flags();
 
-    unsigned long start_timer_and_count_5_seconds = millis();
+    
+    stop_the_robot();
+
+    Serial.println("I have stopped:");
+    Serial.println(i_stopped);
+    
+    
+    // detecting colour
+    i_am_detecting_colour = true;  
+
+    Serial.println("I am deceting colour:");
+    Serial.println(i_am_detecting_colour);
+    
+
+    unsigned long start_timer_and_count_3_seconds = millis();
 
     // loop for 3 seconds
-    while(millis() < start_timer_and_count_5_seconds + 5000)
+    while(millis() < start_timer_and_count_3_seconds + 5000)
     {
+      Serial.println("I am in while loop of detectingColour, colour sensor value is:");
       Serial.println(colour_sensorValue);
+      
       // Red colour
-      if (colour_sensorValue > 280)
+      if (colour_sensorValue > 250)
       {
+        reset_all_flags();
+        i_am_detecting_red_colour = true;
+        
         
         digitalWrite (greenLED, LOW);
         // analog for red is about 300 and blue about 160, test after integration
         // red led on in this case
-        digitalWrite (redLED, HIGH);
+        if ( (millis () - redLEDtimer) >= redLEDinterval){
+          toggleRedLED ();
+        }
         
       }
   
       // Green colour
-      else if (90 < colour_sensorValue < 200)
+      else if (100 < colour_sensorValue < 200)
       {
+        reset_all_flags();
+        i_am_detecting_blue_colour = true;
+  
         
         // green led on in this case
         digitalWrite (redLED, LOW);
-        digitalWrite (greenLED, HIGH);
+        if ( (millis () - greenLEDtimer) >= greenLEDinterval){
+          toggleGreenLED ();
+        }
       }
+  
+      
+      /*
+       else{
+        // indicates colour detector does not work
+        // any solution???
+      
+      } */
+    }
+  }
 
-    }
-    
-    unsigned long time_go_forward_colour = millis();
-    while (millis() < time_go_forward_colour + 3000)
-    {
-      // robot goes forward for 1 second
-      go_forward(100);
-    }
-    unsigned long time_stop_robot = millis();
-    while (millis() < time_stop_robot + 1000)
-    {
-      // robot stops for 1 second
-      stop_the_robot();
-    }
-    
-    // rotate the servo to grab the block
-    servo_forward();
-    ! colour_detector;
+  else
+  {
     
   }
 }
+// after detecting colour, wait for a few secs and toggle the servo/ turn off the leds?

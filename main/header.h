@@ -6,14 +6,16 @@
 
 #include <ArduinoMqttClient.h>
 
-#include <WiFiNINA.h>
 
+#if defined(ARDUINO_AVR_UNO_WIFI_REV2)
+  #include <WiFiNINA.h>
+#endif
 
  
 // -----Here you define the digital led pin numbers
 // -----double check you where you pluged in the led cables on arduino
 
-// D5 for amber, D6 for red, D7 for green led
+// D8 for amber, D9 for red, D10 for green led
 #define amberLED 5
 #define redLED  6
 #define greenLED  7
@@ -25,23 +27,21 @@ extern Adafruit_DCMotor *left_wheel_motor;
 
 extern Servo myservo;
 
-extern const uint8_t servoPin;
-extern unsigned long servo_timer;
-extern int pos;
-extern const unsigned long servo_forward_interval;
-extern const unsigned long servo_backward_interval;
-extern int final_angle;
-extern uint16_t distance_sensorValue;
-extern uint16_t colour_sensorValue;
-
-
+extern bool block_picked_up = false;
 
 // used by helens test code
 extern const unsigned long amberLEDinterval;
+extern const unsigned long redLEDinterval;
+extern const unsigned long greenLEDinterval;
 
 extern unsigned long amberLEDtimer;
+extern unsigned long redLEDtimer;
+extern unsigned long greenLEDtimer;
 
 //------------------------------
+
+
+extern const uint8_t servoPin;
 
 extern uint8_t old_velocity;
 
@@ -54,8 +54,6 @@ extern bool i_am_detecting_colour;
 extern bool i_am_detecting_red_colour;
 extern bool i_am_detecting_blue_colour;
 extern bool i_stopped;
-extern bool sensor_status;
-extern bool colour_detector;
 
 // ----------------------
 // files used in mqttSimpleReceive
@@ -89,7 +87,9 @@ extern int        port; // non encrypted access
 extern const char topic[]; // if both the sender and receier are connected to the same topic, data will be sent
 
 extern float angle, distance;
-extern bool slow_mode_activate, picked_up_block;
+
+extern bool looking_for_block;
+
 
 void stop_the_robot(void);
 void go_forward(uint8_t velocity);
@@ -99,9 +99,9 @@ void turn_left(uint8_t left_velocity);
 void test_go_forward_and_back(uint8_t velocity);
 unsigned int read_integer_input(void);
 void toggleAmberLED (void);
+void toggleRedLED (void);
+void toggleGreenLED (void);
 void flashamberled(void);
-void ToggleDetectingSystem(void);
-void ToggleColourSensor(void);
 void DetectColour(void);
 void servo_rotating(void);
 void test_drive_in_a_square(uint8_t velocity);

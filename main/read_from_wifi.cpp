@@ -33,7 +33,7 @@
 #include "header.h"
 
 String incomingStr;
-bool slow_mode_activate;
+bool looking_for_block;
 
 void read_from_wifi(void) {
 
@@ -54,12 +54,12 @@ void read_from_wifi(void) {
         //break;
       }
       if (distance < 0) {
-        slow_mode_activate = true;
+        looking_for_block = true;
         //delay(1500);
         //Serial.println("looking for block");
       }
       else {
-        slow_mode_activate = false;
+        looking_for_block = false;
       }
     }
   }
