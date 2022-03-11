@@ -10,7 +10,7 @@ uint8_t velocity_of_left_wheel;
 unsigned int mode = 0;
 
 bool end_program = false;
-
+bool picked_up_block = false;
 
 
 void setup()
@@ -20,13 +20,14 @@ void setup()
   pinMode(redLED, OUTPUT);
   pinMode(greenLED, OUTPUT);
   amberLEDtimer = millis ();
-  redLEDtimer = millis ();
-  greenLEDtimer = millis ();
+  sensor_status = true;
+  colour_detector = false;
 
 
   myservo.attach(servoPin);
+  pos = 0;
+  myservo.write(0);
 
-  //servo_backward();
 
 
   //Initialize serial and wait for port to open:
@@ -112,7 +113,10 @@ void setup()
   Serial.println("Press 7 to receive messages from Ioan/Adhi via topic");
   Serial.println("Press 8 to start driving!");
   Serial.println("Press 9 to send message via topic to Adhi.");
+  Serial.println("Press 10 to turn indefinitely.");
   Serial.println("Press 11 to enter new and improved control system.");
+  Serial.println("Press 12 to send message to wifi.");
+  Serial.println("Press 13 to enter trial colour sensing code.");
 
   //velocity = 150;
   //velocity_of_right_wheel = 150;
@@ -151,11 +155,10 @@ void loop()
 
       Serial.println("I am inside test case 2 from Helen");
       // sensor testing
-      while (1)
-      {
-        flashamberled();
-        DetectColour();
-      }
+      go_forward(100);
+      ToggleDetectingSystem();
+      ToggleColourSensor();
+      DetectColour();
 
       end_program = true;
       // test here some other stuff
@@ -195,9 +198,12 @@ void loop()
 
     case 5:
 
-      //servo_rotating();
-
-      Serial.println("I am rotating servo.");
+      while (1) {
+        servo_forward();
+        delay(1000);
+        servo_backward();
+        delay(1000);
+      }
 
       end_program = true;
 
@@ -269,23 +275,29 @@ void loop()
       {
         read_from_wifi(); // read the angle and distance
 
-        while ((abs(angle) > 9) && (looking_for_block == false)) // looping until the angle threshold is achieved
+        while ((abs(angle) > 9) && (slow_mode_activate == false)) // old less precise control system which uses direct feedback
         {
           read_from_wifi();
+          flashamberled();
           if (angle > 0)
           {
-            turn_left(90);
+            turn_left(125);
           }
           else
           {
-            turn_right(90);
+            turn_right(125);
           }
         }
-        if (distance >= 0.1)
+
+
+        if (distance >= 0.1) // move forward if too far away
         {
-          go_forward(255);
+          flashamberled();
+          go_forward(int(255 / 1.08));
         }
-        /*if (angle > 0)  // checking whether the robot needs to be moved left or right
+
+
+        /*if (angle > 0)  // slower predictive control system
           {
           turn_left_to_angle(abs(angle), 90);
           }
@@ -301,7 +313,7 @@ void loop()
           read_from_wifi(); // update parameters*/
 
 
-        while ((abs(angle) > 4) && (looking_for_block == true)) // using increased accuracy when looking for block
+        while ((abs(angle) > 3) && (slow_mode_activate == true)) // using increased accuracy when looking for block
         {
           if (angle > 0)  // checking whether the robot needs to be moved left or right
           {
@@ -317,56 +329,132 @@ void loop()
             //1000ms to allow camera to catch up
           }
           read_from_wifi(); // update parameters
+          flashamberled();
         }
 
 
-        /*if ((distance > 0.1) && (looking_for_block == false)) // move forward if the robot is more than 10cm away (angle is within threshold in order to exit previous while)
+        if ((distance <= -0.1) && (slow_mode_activate == true)) { // enters slow mode and uses predictive distance movement
+          move_forward_given_distance(-0.5 * distance, 125);
+        }
+
+
+
+        if ((distance >= -0.11) && (slow_mode_activate == true) && (picked_up_block == true)) // in slow mode when looking to drop off the block
+        {
+          // move forward estimated distance
+          // trigger servo to drop off
+
+          Serial.println("Entering dropping off code");
+
+          //move_forward_given_distance(0.1, 125);
+
+          
+          while (distance < -0.03) {
+            move_forward_given_distance(0.005, 90);
+            unsigned long moving_forward_delay = millis(); //can declare this at top of main
+            while (millis() < moving_forward_delay + 200)
+            {
+              read_from_wifi();
+              flashamberled();
+            }
+          }
+
+          
+          servo_backward();
+
+          // set boolean
+          picked_up_block = false;
+
+          // reverse to clear block
+          unsigned long time_to_reverse = millis(); //can declare this at top of main
+          while (millis() < time_to_reverse + 3000)
           {
-          go_forward(255);
-          }*/
+            go_backward(125);
+          }
 
-        if ((distance < -0.1) && (looking_for_block == true)) {
-          move_forward_given_distance(-1 * distance, 125); //moves forward by expected distance
+          digitalWrite(redLED, LOW);
+          digitalWrite(greenLED, LOW);
+
+          unsigned long delay_wait_for_command = millis(); //can declare this at top of main
+          while (millis() < delay_wait_for_command + 3000)
+          {
+            read_from_wifi();
+          }
+          //read_from_wifi();
         }
 
-        while ((distance >= -0.1) && (looking_for_block == true) && (picked_up_block == false) // start checking if I can see the block
-        {
-          //sense colour and and pick up
+        if ((distance >= -0.11) && (slow_mode_activate == true) && (picked_up_block == false)) // enters threshold and stops listening to CV and enters colour sensing loop
+        { // picking up code
+
+          Serial.println("Entering picking up code");
+
+          servo_backward();
+
+          while (analogRead(A0) <= 200) { // distance mesurement
+            unsigned long moving_forward_timeout = millis(); //can declare this at top of main
+            while ((millis() > moving_forward_timeout + 5000) && (millis() < moving_forward_timeout + 10000))
+            {
+              go_backward(125);
+              flashamberled();
+            }
+            move_forward_given_distance(0.005, 125);
+            //go_forward(90);
+            unsigned long short_block_search_delay = millis(); //can declare this at top of main
+            while (millis() < short_block_search_delay + 200)
+            {
+              flashamberled();
+            }
+            //Serial.print("Distance value is: ");
+            //Serial.println(analogRead(A0));
+          }
+
           stop_the_robot();
-          send_to_wifi("Insert colour here");
-          delay(3000);
+          digitalWrite(amberLED, LOW);
+
+          //Serial.println(analogRead(A1));
+          if (analogRead(A1) > 140) { // checking colour sensor
+            Serial.print("Colour value is: ");
+            Serial.println("red");
+            digitalWrite(redLED, HIGH);
+            send_to_wifi("red");
+          }
+          if (analogRead(A1) > 40 && analogRead(A1) <= 140) {
+            Serial.print("Colour value is: ");
+            Serial.println("blue");
+            digitalWrite(greenLED, HIGH);
+            send_to_wifi("blue");
+          }
+
+          unsigned long flash_led_delay = millis(); //can declare this at top of main
+          while (millis() < flash_led_delay + 5000)
+          {
+            digitalWrite(amberLED, LOW);
+          }
+
+          toggleAmberLED(); // restart flashing LED
+
+          move_forward_given_distance(0.15, 125);
+
+          servo_forward();
+
+          // set boolean
           picked_up_block = true;
-          /*if (distance_sensorValue > 800){ // block is close enough
 
-            stop_the_robot(); // stop the robot
-
-
+          /*unsigned long wait_for_command = millis(); //can declare this at top of main
+            while (millis() < wait_for_command + 5000)
+            {
+            read_from_wifi();
             }*/
-          // check if I can see the block at all
-          // flash blue or red LED, acording to the block colour
-          // pick up block
-          // if block if picked up, raise flag to start going backwards
+
+          while (mqttClient.parseMessage() == 0) {
+            // do nothing
+          }
+          read_from_wifi();
+
         }
-        while ((distance >= -0.1) && (looking_for_block == true) && (picked_up_block == true)) // start checking if I can see the block
-        {
-          //sense colour and and pick up
-          stop_the_robot();
-          send_to_wifi("Insert colour here");
-          delay(3000);
-          picked_up_block = true;
-          /*if (distance_sensorValue > 800){ // block is close enough
 
-            stop_the_robot(); // stop the robot
-
-
-            }*/
-          // check if I can see the block at all
-          // flash blue or red LED, acording to the block colour
-          // pick up block
-          // if block if picked up, raise flag to start going backwards
-        }
-        
       }
+
 
       end_program = true;
       break;
@@ -376,6 +464,59 @@ void loop()
         send_to_wifi("hello there");
         delay(5000);
       }
+
+      end_program = true;
+      break;
+
+    case 13:
+
+      servo_backward();
+
+      while (analogRead(A0) <= 200) { // distance mesurement
+        move_forward_given_distance(0.005, 125);
+        //go_forward(90);
+
+        unsigned long short_block_search_delay = millis(); //can declare this at top of main
+        while (millis() < short_block_search_delay + 200)
+        {
+          flashamberled();
+        }
+        Serial.print("Distance value is: ");
+        Serial.println(analogRead(A0));
+      }
+
+      stop_the_robot();
+      digitalWrite(amberLED, LOW);
+
+      Serial.println(analogRead(A1));
+      if (analogRead(A1) > 140) { // checking colour sensor
+        Serial.print("Colour value is: ");
+        Serial.println("red");
+        digitalWrite(redLED, HIGH);
+        send_to_wifi("red");
+      }
+      if (analogRead(A1) > 40 && analogRead(A1) <= 140) {
+        Serial.print("Colour value is: ");
+        Serial.println("blue");
+        digitalWrite(greenLED, HIGH);
+        send_to_wifi("blue");
+      }
+
+      unsigned long flash_led_delay = millis(); //can declare this at top of main
+      while (millis() < flash_led_delay + 5000)
+      {
+        digitalWrite(amberLED, LOW);
+      }
+
+      toggleAmberLED(); // restart flashing LED
+
+      move_forward_given_distance(0.1, 125);
+
+      servo_forward();
+
+      end_program = true;
+      break;
+
 
       end_program = true;
       break;

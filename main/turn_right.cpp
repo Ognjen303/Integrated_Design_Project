@@ -14,11 +14,11 @@ void turn_right(uint8_t right_velocity)
 
   //reset_all_flags();
 
-  right_wheel_motor->setSpeed(100);
-  left_wheel_motor->setSpeed(100);
+  right_wheel_motor->setSpeed(right_velocity);
+  left_wheel_motor->setSpeed(right_velocity);
 
-  right_wheel_motor->run(FORWARD);
-  left_wheel_motor->run(BACKWARD);
+  right_wheel_motor->run(BACKWARD);
+  left_wheel_motor->run(FORWARD);
 
   /*if(i_am_turning_right)
     return;
@@ -47,6 +47,7 @@ void turn_right_to_angle(float rotate_angle, uint8_t right_velocity) {
   while (millis() - start_right_turn < int(1000 * (rotate_angle * 10 / 90.0))) { // using while loop to measure the time
     turn_right(right_velocity); // turning the robot left
     read_from_wifi();
+    flashamberled();
   }
   
   //Serial.println("exiting left turn");
