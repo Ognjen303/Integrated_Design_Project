@@ -6,7 +6,7 @@ int pos;
 const unsigned long servo_forward_interval = 15;
 const unsigned long servo_backward_interval = 16;
 unsigned long servo_timer;
-const uint16_t final_angle = 140;
+const uint16_t final_angle = 165;
 
 
 void servo_forward (void){

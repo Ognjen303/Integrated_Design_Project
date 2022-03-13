@@ -36,26 +36,9 @@ extern uint16_t colour_sensorValue;
 
 
 
-// used by helens test code
+// used to flash amber led
 extern const unsigned long amberLEDinterval;
-
 extern unsigned long amberLEDtimer;
-
-//------------------------------
-
-extern uint8_t old_velocity;
-
-
-extern bool i_am_going_forward;
-extern bool i_am_going_backward;
-extern bool i_am_turning_left;
-extern bool i_am_turning_right;
-extern bool i_am_detecting_colour;
-extern bool i_am_detecting_red_colour;
-extern bool i_am_detecting_blue_colour;
-extern bool i_stopped;
-extern bool sensor_status;
-extern bool colour_detector;
 
 // ----------------------
 // files used in mqttSimpleReceive
@@ -72,21 +55,6 @@ extern const char topic[]; // if both the sender and receier are connected to th
 
 extern float angle, distance;
 
-
-
-
-// ----------------------
-// files used in mqttSimpleReceive
-extern char ssid[];
-extern char pass[];
-
-
-extern WiFiClient wifiClient;
-extern MqttClient mqttClient;
-
-extern const char broker[];
-extern int        port; // non encrypted access
-extern const char topic[]; // if both the sender and receier are connected to the same topic, data will be sent
 
 extern float angle, distance;
 extern bool slow_mode_activate, picked_up_block;
@@ -96,18 +64,9 @@ void go_forward(uint8_t velocity);
 void go_backward(uint8_t velocity);
 void turn_right(uint8_t right_velocity);
 void turn_left(uint8_t left_velocity);
-void test_go_forward_and_back(uint8_t velocity);
-unsigned int read_integer_input(void);
 void toggleAmberLED (void);
 void flashamberled(void);
-void ToggleDetectingSystem(void);
-void ToggleColourSensor(void);
-void DetectColour(void);
 void servo_rotating(void);
-void test_drive_in_a_square(uint8_t velocity);
-void reset_all_flags(void);
-void mqtt_Simple_receive(void);
-void mqtt_Simple_sender(String message);
 void read_from_wifi(void);
 void send_to_wifi(String send_message);
 void turn_left_to_angle(float angle, uint8_t left_velocity);
