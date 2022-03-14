@@ -116,11 +116,11 @@ void loop() {
     flashamberled();
     if (angle > 0)
     {
-      turn_left(90);
+      turn_left(120);
     }
     else
     {
-      turn_right(90);
+      turn_right(120);
     }
   }
 
@@ -148,51 +148,211 @@ void loop() {
     read_from_wifi(); // update parameters*/
 
 
-  while ((abs(angle) > 3) && (slow_mode_activate == true)) // using increased accuracy when looking for block
+  // trying to get accurately close to the block with the 0.1 threshold
+  while (slow_mode_activate == true)
   {
-    if (angle > 0)  // checking whether the robot needs to be moved left or right
+
+    // CODE FOR CONTROLING THE ROBOT IN SLOW_MODE IF I HAVENT PICKED UP THE BLOCK
+    if (!picked_up_block && ((abs(angle) > 3) || (distance < -0.1)))
     {
-      turn_left_to_angle(abs(angle), 90);
+
+      Serial.println("I am trying to get accurately close to the block with the 0.1 threshold ");
+
+      if ((abs(angle) > 3)) // using increased accuracy when looking for block
+      {
+        if (angle > 0)  // checking whether the robot needs to be moved left or right
+        {
+          turn_left_to_angle(abs(angle), 90);
+        }
+        else
+        {
+          turn_right_to_angle(abs(angle), 90);
+        }
+
+        unsigned long time_end_turn = millis(); //including delay to allow for camera to catch up
+        while (millis() < time_end_turn + 1000)
+        {
+          flashamberled();
+        }
+        read_from_wifi(); // update parameters
+        flashamberled();
+      }
+
+
+      if ((distance < -0.1))
+      { // enters slow mode and uses predictive distance movement
+        move_forward_given_distance(-0.5 * distance, 125); // deliberately undercalibrated so does not overshoot
+      }
+    }
+
+
+    // CODE FOR CONTROLING THE ROBOT IN SLOW_MODE IF I HAVE PICKED UP THE BLOCK
+    else if (picked_up_block && ((abs(angle) > 3) || (distance < -0.03)))
+    {
+      if ((abs(angle) > 3)) // using increased accuracy when looking for block
+      {
+        if (angle > 0)  // checking whether the robot needs to be moved left or right
+        {
+          turn_left_to_angle(abs(angle), 90); // takes rougly 300-1000ms
+        }
+        else
+        {
+          turn_right_to_angle(abs(angle), 90);
+        }
+
+        unsigned long time_end_turn = millis(); //including delay to allow for camera to catch up
+        while (millis() < time_end_turn + 3000)
+        {
+          flashamberled();
+          read_from_wifi();
+        }
+        read_from_wifi(); // update parameters
+        flashamberled();
+      }
+
+
+      else if ((distance < -0.03))
+      { // enters slow mode and uses predictive distance movement
+        move_forward_given_distance(-0.5 * distance, 125); // deliberately undercalibrated so does not overshoot
+      }
+
     }
     else
     {
-      turn_right_to_angle(abs(angle), 90);
+      Serial.println("broken out of slowmode loop");
+      Serial.print("Picked up block value: ");
+      Serial.println(picked_up_block);
+      break;
     }
-
-    unsigned long time_end_turn = millis(); //including delay to allow for camera to catch up
-    while (millis() < time_end_turn + 1000)
-    {
-      flashamberled();
-    }
-    read_from_wifi(); // update parameters
-    flashamberled();
   }
-
-
-  if ((distance < -0.1) && (slow_mode_activate == true)) { // enters slow mode and uses predictive distance movement
-    move_forward_given_distance(-0.5 * distance, 125); // deliberately undercalibrated so does not overshoot
-  }
+  // once I exit this while loop, angle is below 3 degrees and ditance is greater or equal than -0.1
 
 
 
-  else if ((distance >= -0.1) && (slow_mode_activate == true) && (picked_up_block == true)) // in slow mode when looking to drop off the block
+  // START OF PICK UP CODE
+  if ((distance >= -0.1) && (slow_mode_activate == true) && (picked_up_block == false)) // enters threshold and stops listening to CV and enters colour sensing loop
   {
+    // picking up code
 
+    Serial.println("Entering picking up code");
+
+    servo_backward(); // make sure the servo is back
+
+    while (analogRead(A0) <= 200)
+    { // checking distance sensor on robot for block
+
+      move_forward_given_distance(0.005, 125);
+      //go_forward(90);
+
+      unsigned long short_block_search_delay = millis(); // small delay between movements
+      while (millis() < short_block_search_delay + 200)
+      {
+        flashamberled();
+      }
+    }
+
+    move_forward_given_distance(0.015, 125);  // moving forward small amount to put block closer to colour sensor
+
+    stop_the_robot();
+    digitalWrite(amberLED, LOW);
+
+    //Serial.println(analogRead(A1));
+    if (analogRead(A1) > 140)
+    {
+      // checking colour sensor
+      Serial.print("Colour value is: ");
+      Serial.println("red");
+      digitalWrite(redLED, HIGH);
+      send_to_wifi("red");
+    }
+
+    else if (analogRead(A1) > 40 && analogRead(A1) <= 140)
+    {
+      Serial.print("Colour value is: ");
+      Serial.println("blue");
+      digitalWrite(greenLED, HIGH);
+      send_to_wifi("blue");
+    }
+
+
+
+    digitalWrite(amberLED, LOW);
+    unsigned long flash_led_delay = millis(); // 5 second delay to ensure LED can be read
+    while (millis() < flash_led_delay + 5000)
+    {
+      //  pure delay to allow robot information to catch up with camera
+    }
+
+    toggleAmberLED(); // restart flashing LED
+
+
+    // A2 is opto switch to decect if the block is picked up
+
+    unsigned long forward_to_block_timeout = millis(); //moving forward until block is detected by
+    while (analogRead(A2) < 500 && (millis() < (forward_to_block_timeout + 5000)))
+    {
+
+      // If I have picked up the block or if the block is stuck in the
+      move_forward_given_distance(0.005, 125);
+
+      unsigned long forward_to_block_delay = millis(); // small delay between steps
+      while (millis() < forward_to_block_delay + 200)
+      {
+        flashamberled();
+      }
+    }
+
+    if (millis() >= forward_to_block_timeout + 8000)
+    {
+      // timeout condition is met so must reapproach
+
+      unsigned long move_backward_timeout = millis();
+      while (millis() < move_backward_timeout + 5000) // move backwards for 5 seconds
+      {
+        go_backward(125);
+        flashamberled();
+      }
+
+      send_to_wifi("reapproach");
+    }
+
+    if (analogRead(A2) >= 500) { // block is detected by underfloor sensor
+      move_forward_given_distance(0.05, 100);
+      servo_forward();
+      picked_up_block = true;
+      send_to_wifi("pickedup");
+    }
+
+    // wait for the next message
+    while (mqttClient.parseMessage() == 0) {
+      // do nothing
+    }
+    read_from_wifi(); // read the message
+  }
+  // END OF PICKING UP CODE
+
+
+
+  // START OF DROPPING OFF BLOCK CODE
+  else if ((distance >= -0.03) && (slow_mode_activate == true) && (picked_up_block == true)) // in slow mode when looking to drop off the block
+  {
+    // needs editing for greater accuracy
     Serial.println("Entering dropping off code");
 
 
-    while (distance < -0.01) { // create blocking loop to move forward until distance threshold is met
+    while (distance < -0.02) { // create blocking loop to move forward until distance threshold is met
+      Serial.println("entering edging forward loop");
       move_forward_given_distance(0.005, 90);
 
       unsigned long moving_forward_delay = millis(); // adding in delay
-      while (millis() < moving_forward_delay + 200)
+      while (millis() < moving_forward_delay + 500)
       {
         read_from_wifi();
         flashamberled();
       }
     }
 
-
+    move_forward_given_distance(0.02, 90);
     servo_backward(); // releasing block
 
     picked_up_block = false; // resetting flag
@@ -214,92 +374,5 @@ void loop() {
     {
       read_from_wifi();
     }
-  }
-
-  else if ((distance >= -0.1) && (slow_mode_activate == true) && (picked_up_block == false)) // enters threshold and stops listening to CV and enters colour sensing loop
-  { // picking up code
-
-    Serial.println("Entering picking up code");
-
-    servo_backward(); // make sure the servo is back
-
-    while (analogRead(A0) <= 200) { // checking distance sensor on robot for block
-
-      move_forward_given_distance(0.005, 125);
-      //go_forward(90);
-
-      unsigned long short_block_search_delay = millis(); // small delay between movements
-      while (millis() < short_block_search_delay + 200)
-      {
-        flashamberled();
-      }
-    }
-
-    move_forward_given_distance(0.015, 125);  // moving forward small amount to put block closer to colour sensor
-
-    stop_the_robot();
-    digitalWrite(amberLED, LOW);
-
-    //Serial.println(analogRead(A1));
-    if (analogRead(A1) > 140) { // checking colour sensor
-      Serial.print("Colour value is: ");
-      Serial.println("red");
-      digitalWrite(redLED, HIGH);
-      send_to_wifi("red");
-    }
-    if (analogRead(A1) > 40 && analogRead(A1) <= 140) {
-      Serial.print("Colour value is: ");
-      Serial.println("blue");
-      digitalWrite(greenLED, HIGH);
-      send_to_wifi("blue");
-    }
-
-    digitalWrite(amberLED, LOW);
-    unsigned long flash_led_delay = millis(); // 5 second delay to ensure LED can be read
-    while (millis() < flash_led_delay + 5000)
-    {
-      //  pure delay
-    }
-
-    toggleAmberLED(); // restart flashing LED
-
-
-    // A2 is opto switch to decect if the block is picked up
-
-    unsigned long forward_to_block_timeout = millis(); //moving forward until block is detected by
-    while (analogRead(A2) < 500 && (millis() < (forward_to_block_timeout + 5000))) {
-
-      // If I have picked up the block or if the block is stuck in the
-      move_forward_given_distance(0.005, 125);
-
-      unsigned long forward_to_block_delay = millis(); // small delay between steps
-      while (millis() < forward_to_block_delay + 200)
-      {
-        flashamberled();
-      }
-    }
-
-    if (millis() >= forward_to_block_timeout + 5000) { // timeout condition is met so must reapproach
-      send_to_wifi("reapproach");
-
-      unsigned long move_backward_timeout = millis();
-      while (millis() < move_backward_timeout + 5000) // move backwards for 5 seconds
-      {
-        go_backward(125);
-        flashamberled();
-      }
-    }
-
-    if (analogRead(A2) >= 500) { // block is detected by underfloor sensor
-      move_forward_given_distance(0.05, 100);
-      servo_forward();
-      picked_up_block = true;
-    }
-
-    // wait for the next message
-    while (mqttClient.parseMessage() == 0) {
-      // do nothing
-    }
-    read_from_wifi(); // read the message
   }
 }
