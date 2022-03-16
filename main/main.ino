@@ -112,16 +112,31 @@ void loop() {
 
   while ((abs(angle) > 9) && (slow_mode_activate == false)) // old less precise control system which uses direct feedback
   {
-    read_from_wifi();
-    flashamberled();
-    if (angle > 0)
-    {
+    /*read_from_wifi();
+      flashamberled();
+      if (angle > 0)
+      {
       turn_left(120);
+      }
+      else
+      {
+      turn_right(120);
+      }*/
+    read_from_wifi();
+    if (angle > 0)  // slower predictive control system
+    {
+      turn_left_to_angle(abs(angle), 255);
     }
     else
     {
-      turn_right(120);
+      turn_right_to_angle(abs(angle), 255);
     }
+    unsigned long time_end_turn = millis(); //can declare this at top of main
+    while (millis() < time_end_turn + 1000)
+    {
+      //1000ms to allow camera to catch up
+    }
+    read_from_wifi(); // update parameters
   }
 
 
@@ -162,42 +177,45 @@ void loop() {
       {
         if (angle > 0)  // checking whether the robot needs to be moved left or right
         {
-          turn_left_to_angle(abs(angle), 90);
+          turn_left_to_angle(abs(angle), 120);
         }
         else
         {
-          turn_right_to_angle(abs(angle), 90);
+          turn_right_to_angle(abs(angle), 120);
         }
 
         unsigned long time_end_turn = millis(); //including delay to allow for camera to catch up
-        while (millis() < time_end_turn + 1000)
+        while (millis() < time_end_turn + 2000)
         {
           flashamberled();
         }
         read_from_wifi(); // update parameters
         flashamberled();
+
       }
 
 
-      if ((distance < -0.1))
+      else if ((distance < -0.1))
       { // enters slow mode and uses predictive distance movement
-        move_forward_given_distance(-0.5 * distance, 125); // deliberately undercalibrated so does not overshoot
+        move_forward_given_distance(-0.6 * distance, 140); // deliberately undercalibrated so does not overshoot
       }
     }
 
 
     // CODE FOR CONTROLING THE ROBOT IN SLOW_MODE IF I HAVE PICKED UP THE BLOCK
-    else if (picked_up_block && ((abs(angle) > 3) || (distance < -0.03)))
+    else if (picked_up_block && ((abs(angle) > 3) || (distance < -0.07))) // -0.03
     {
-      if ((abs(angle) > 3)) // using increased accuracy when looking for block
+      // enter this if i have just rolled down the ramp and want to turn
+
+      if ((abs(angle) > 3) && (distance < -0.07)) // using increased accuracy when looking for block
       {
         if (angle > 0)  // checking whether the robot needs to be moved left or right
         {
-          turn_left_to_angle(abs(angle), 90); // takes rougly 300-1000ms
+          turn_left_to_angle(abs(angle), 200); // takes rougly 300-1000ms
         }
         else
         {
-          turn_right_to_angle(abs(angle), 90);
+          turn_right_to_angle(abs(angle), 200);
         }
 
         unsigned long time_end_turn = millis(); //including delay to allow for camera to catch up
@@ -211,9 +229,17 @@ void loop() {
       }
 
 
-      else if ((distance < -0.03))
-      { // enters slow mode and uses predictive distance movement
-        move_forward_given_distance(-0.5 * distance, 125); // deliberately undercalibrated so does not overshoot
+      else if (distance < -0.07) // -0.03
+      {
+        // enter this if i have just rolled down ramp and the angle is correct
+        // enters slow mode and uses predictive distance movement
+        move_forward_given_distance(-0.8 * distance, 125); // deliberately undercalibrated so does not overshoot
+      }
+
+
+      else // enter this if I am close enough to drop off zone and need to correct the angle
+      {
+        break;
       }
 
     }
@@ -245,19 +271,30 @@ void loop() {
       //go_forward(90);
 
       unsigned long short_block_search_delay = millis(); // small delay between movements
-      while (millis() < short_block_search_delay + 200)
+      while (millis() < short_block_search_delay + 100)
       {
         flashamberled();
       }
     }
 
-    move_forward_given_distance(0.015, 125);  // moving forward small amount to put block closer to colour sensor
+    move_forward_given_distance(0.01, 125);  // moving forward small amount to put block closer to colour sensor
 
     stop_the_robot();
     digitalWrite(amberLED, LOW);
 
     //Serial.println(analogRead(A1));
-    if (analogRead(A1) > 140)
+
+    // caluculating average of the colour sensor value
+    int colour_sensor_value = 0;
+    for (int i = 0; i < 5; i++)
+    {
+        colour_sensor_value += analogRead(A1);
+    }
+
+    colour_sensor_value /= 5;
+    
+    
+    if (colour_sensor_value > 100) // used to say analogRead(A1) instead of colour_sensor_value
     {
       // checking colour sensor
       Serial.print("Colour value is: ");
@@ -266,7 +303,7 @@ void loop() {
       send_to_wifi("red");
     }
 
-    else if (analogRead(A1) > 40 && analogRead(A1) <= 140)
+    else if (colour_sensor_value > 40 && colour_sensor_value <= 100) // used to say analogRead(A1) instead of colour_sensor_value;
     {
       Serial.print("Colour value is: ");
       Serial.println("blue");
@@ -289,14 +326,13 @@ void loop() {
     // A2 is opto switch to decect if the block is picked up
 
     unsigned long forward_to_block_timeout = millis(); //moving forward until block is detected by
-    while (analogRead(A2) < 500 && (millis() < (forward_to_block_timeout + 5000)))
+    while (analogRead(A2) < 500 && (millis() < (forward_to_block_timeout + 8000)))
     {
-
       // If I have picked up the block or if the block is stuck in the
-      move_forward_given_distance(0.005, 125);
+      move_forward_given_distance(0.005, 175);
 
       unsigned long forward_to_block_delay = millis(); // small delay between steps
-      while (millis() < forward_to_block_delay + 200)
+      while (millis() < forward_to_block_delay + 100)
       {
         flashamberled();
       }
@@ -309,7 +345,7 @@ void loop() {
       unsigned long move_backward_timeout = millis();
       while (millis() < move_backward_timeout + 5000) // move backwards for 5 seconds
       {
-        go_backward(125);
+        go_backward(255);
         flashamberled();
       }
 
@@ -319,22 +355,28 @@ void loop() {
     if (analogRead(A2) >= 500) { // block is detected by underfloor sensor
       move_forward_given_distance(0.05, 100);
       servo_forward();
-      picked_up_block = true;
       send_to_wifi("pickedup");
+      picked_up_block = true;
     }
 
     // wait for the next message
-    while (mqttClient.parseMessage() == 0) {
+    stop_the_robot();
+    /*while (mqttClient.parseMessage() == 0) {
       // do nothing
+      }
+      read_from_wifi(); // read the message*/
+
+    while (distance <= 0) // wait for next non-slow mode input
+    {
+      read_from_wifi();
     }
-    read_from_wifi(); // read the message
   }
   // END OF PICKING UP CODE
 
 
 
   // START OF DROPPING OFF BLOCK CODE
-  else if ((distance >= -0.03) && (slow_mode_activate == true) && (picked_up_block == true)) // in slow mode when looking to drop off the block
+  else if ((distance >= -0.07) && (slow_mode_activate == true) && (picked_up_block == true)) // in slow mode when looking to drop off the block
   {
     // needs editing for greater accuracy
     Serial.println("Entering dropping off code");
@@ -345,23 +387,26 @@ void loop() {
       move_forward_given_distance(0.005, 90);
 
       unsigned long moving_forward_delay = millis(); // adding in delay
-      while (millis() < moving_forward_delay + 500)
+      while (millis() < moving_forward_delay + 100)
       {
         read_from_wifi();
         flashamberled();
       }
     }
 
-    move_forward_given_distance(0.02, 90);
+    move_forward_given_distance(0.04, 90);
+    //turn_right_to_angle(20, 90);
+
+
     servo_backward(); // releasing block
 
     picked_up_block = false; // resetting flag
 
     // reverse to clear block
     unsigned long time_to_reverse = millis();
-    while (millis() < time_to_reverse + 3000)
+    while (millis() < time_to_reverse + 2500)
     {
-      go_backward(125);
+      go_backward(255);
     }
 
     digitalWrite(redLED, LOW); // resetting LEDs to indicate block colour
