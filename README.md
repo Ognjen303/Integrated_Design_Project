@@ -1,7 +1,6 @@
 # Integrated_Design_Project
 
-This was part of 2nd year project, where the team built an autonomous robot using arduino and computer vision. In this task
-we build a robot to demonstrate the collection, detection and delivery of blocks to a high degree of
+This was part of 2nd year Cambridge Engineering project, where the team built an autonomous robot using arduino and computer vision. In this task we build a robot to demonstrate the collection, detection and delivery of blocks to a high degree of
 precision in a structured environment.
 
 The team was: Ioan Webber, Helen Gao, Edward Hu, Kohei Watanabe, Adhithya Saravanan and Ognjen Stefanovic
