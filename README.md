@@ -8,3 +8,6 @@ The main folder regarding the control of the robot was written by Helen, Ioan an
 
 ![Robot](https://user-images.githubusercontent.com/72799142/159185592-883267df-7676-419f-8319-90aa01999d84.PNG)
 ![Team picture](https://user-images.githubusercontent.com/72799142/159185706-0c38faeb-962b-43fe-8a30-b232150b9696.jpg)
+
+![Drop off](https://user-images.githubusercontent.com/65687348/159563100-54f7eb60-ec65-47a0-a57f-29e472b4094f.mp4)
+![Pick up](https://user-images.githubusercontent.com/65687348/159563171-de99fd7b-30f0-444d-8042-684347441730.mp4)
