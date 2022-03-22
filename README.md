@@ -1,4 +1,4 @@
-# Integrated_Design_Project
+# Integrated Design Project
 
 This was a 2nd year Cambridge Engineering project, where the team built an autonomous robot using arduino and computer vision. In this task we build a robot to demonstrate the collection, detection and delivery of blocks to a high degree of precision in a structured environment.
 
