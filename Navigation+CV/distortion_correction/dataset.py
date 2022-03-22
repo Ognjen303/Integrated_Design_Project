@@ -1,17 +1,14 @@
-from anyio import TypedAttributeLookupError
 import cv2
 import numpy
 import time
 
-# Run this script to get save a picture of the stream periodically for calibration 
-
-cap = cv2.VideoCapture('http://localhost:8081/stream/video.mjpeg')
-
-c=22400
+# Run this script to save a picture of the stream periodically for calibration 
+stream = cv2.VideoCapture('http://localhost:8081/stream/video.mjpeg')
+counter=0
 
 while True:
-    grabbed, frame = cap.read()
-    if c%80==0:
-        cv2.imwrite('distortion/imgs/%d.jpg' % (c + 400),frame)
+    r, f = stream.read()
+    if counter%100==0:
+        cv2.imwrite('distortion/imgs/%d.jpg' % (counter),f)
         cv2.waitKey(1)
-    c+=1
+    counter+=1
