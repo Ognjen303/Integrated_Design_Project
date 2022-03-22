@@ -28,12 +28,3 @@ for r in results:
     center_front_edge = (int((ptB[0] + ptA[0])/2), int((ptB[1] + ptA[1])/2))
 
 print(center_front_edge)
-
-'''
-r, f = stream.read()
-f = cv2.undistort(f, mtx, dist, None, newmtx)
-f = f[:, 200:800]
-cv2.circle(f, center_front_edge, 0,(0, 255,0),5)
-cv2.imshow('Drop off points', f)
-cv2.waitKey()
-'''
