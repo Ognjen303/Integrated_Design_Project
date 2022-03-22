@@ -1,4 +1,3 @@
-from tracemalloc import start
 import apriltag
 import cv2
 import numpy as np
